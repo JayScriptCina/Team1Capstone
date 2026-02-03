@@ -33,4 +33,13 @@ public with sharing class Case_Manager {
             System.enqueueJob(new Case_ExternalProviderService(toCallout));
         }
     }
+
+    @AuraEnabled(cacheable=true)
+    public static List<Case_Provider__c> getCaseProviders() {
+        return [
+            SELECT Id, Provider_Name__c, Phone_Number__c, Rating__c, Service_Category__c, Specialty__c
+            FROM Case_Provider__c
+            ORDER BY Rating__c
+        ];
+    }
 }

@@ -1,3 +1,27 @@
 <template>
+  <lightning-card title="Providers Interaction">
+    <lightning-button label="Find Providers" onclick={handleFindProviders}></lightning-button>
+
+
+      <lightning-datatable
+      key-field="Id"
+      data={sortedRequests}
+      columns={columns}
+      default-sort-direction={defaultSortDirection}
+      sorted-direction={sortDirection}
+      sorted-by={sortedBy}
+      onsort={onHandleSort}>
+      </lightning-datatable>
+
     
+    <template if:false={hasData}>
+      <p style="text-align:center; padding:20px;">There are no records in the database. Add a new Case Provider to begin browsing.</p>
+    </template>
+    
+    <template if:true={providersData.error}>
+      <p>Errors: {errors}</p>
+    </template>
+    
+  </lightning-card>
+
 </template>
