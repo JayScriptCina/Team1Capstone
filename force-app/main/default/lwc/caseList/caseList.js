@@ -1,3 +1,7 @@
+// Name: Jay Cina
+// Date: 02/04/2026
+// Desc: A dynamic list that displays Case data which can be filtered via typing in values (ex. name) or picking values (ex. picklist)
+// Dynamic Data Table base code credit: https://medium.com/@gadige.sfdc/lwc-data-table-with-dynamic-filters-28387a11cab4
 import { LightningElement, track } from 'lwc';
 
 export default class DynamicDataTable extends LightningElement {
@@ -14,7 +18,7 @@ export default class DynamicDataTable extends LightningElement {
 
     // Columns Definition
     columns = [
-        { label: 'Name', fieldName: 'name', type: 'text' },
+        { label: 'Name', fieldName: 'name', type: 'text', editable: true },
         { label: 'Status', fieldName: 'status', type: 'text' },
         { label: 'Email', fieldName: 'email', type: 'email' },
         { label: 'Created Date', fieldName: 'createdDate', type: 'date' },

@@ -1,3 +1,26 @@
 <template>
-    
+  <p style="color:red;">TEST: COMPONENT IS RENDERING</p>
+
+   <div class="wrapper">
+    <section class="content">
+      <div class="columns">
+
+        <!-- Main Column -->
+        <main class="main">
+          <c-case-list
+            onhandlerowaction={handleRowAction}>
+          </c-case-list>     
+        </main>
+
+        <!-- Sidebar Detail Column -->
+        <aside class="sidebar-second">
+          <c-case-detail
+            class="slds-show"
+            request={currentRequest}>
+          </c-case-detail>
+        </aside>
+
+      </div>
+    </section>
+  </div>
 </template>
