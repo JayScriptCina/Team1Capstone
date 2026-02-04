@@ -1,0 +1,73 @@
+<template>
+    <lightning-card title="Dynamic Filter DataTable">
+        <div class="slds-grid slds-wrap slds-p-around_medium">
+            
+            <!-- Name Filter -->
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input 
+                    type="text" 
+                    label="Search Name" 
+                    onchange={handleFilterChange}
+                    data-filter="name"
+                ></lightning-input>
+            </div>
+
+            <!-- Status Filter -->
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-combobox
+                    label="Status"
+                    options={statusOptions}
+                    onchange={handleFilterChange}
+                    data-filter="status"
+                ></lightning-combobox>
+            </div>
+
+            <!-- Email Filter -->
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input 
+                    type="text" 
+                    label="Email"
+                    onchange={handleFilterChange}
+                    data-filter="email"
+                ></lightning-input>
+            </div>
+
+            <!-- Created Date Filter -->
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-input 
+                    type="date" 
+                    label="Created Date"
+                    onchange={handleFilterChange}
+                    data-filter="createdDate"
+                ></lightning-input>
+            </div>
+
+            <!-- Role Filter -->
+            <div class="slds-col slds-size_1-of-5">
+                <lightning-combobox
+                    label="Role"
+                    options={roleOptions}
+                    onchange={handleFilterChange}
+                    data-filter="role"
+                ></lightning-combobox>
+            </div>
+
+            <!-- Reset Button -->
+            <div class="slds-col slds-size_1-of-5 slds-m-top_medium">
+                <lightning-button 
+                    label="Reset Filters" 
+                    variant="neutral" 
+                    onclick={resetFilters}
+                ></lightning-button>
+            </div>
+        </div>
+
+        <!-- DataTable -->
+        <lightning-datatable 
+            key-field="id"
+            data={filteredData}
+            columns={columns}
+            hide-checkbox-column="true"
+        ></lightning-datatable>
+    </lightning-card>
+</template>
