@@ -55,6 +55,7 @@ public with sharing class Case_Manager {
         @AuraEnabled public String Priority;
         @AuraEnabled public String RecordTypeName;
         @AuraEnabled public String ContactId;
+        @AuraEnabled public String ContactName;
         @AuraEnabled public Datetime SLATarget;
     }
 
@@ -66,7 +67,7 @@ public with sharing class Case_Manager {
         for (Case c : [
             SELECT Id, CaseNumber, RecordType.Name, OwnerId, Description, Priority, SLA_Target__c, SLAViolation__c, Status, Subject, Triage_Category__c,
             Case_Provider__c,
-            AccountId, ContactId, ContactPhone
+            AccountId, ContactId, ContactPhone, Contact.Name
             FROM Case
             //WITH USER_MODE
         ]) {
@@ -77,6 +78,7 @@ public with sharing class Case_Manager {
             dto.Priority = c.Priority;
             dto.RecordTypeName = c.RecordType.Name != null ? c.RecordType.Name : null;
             dto.ContactId = c.ContactId != null ? c.ContactId : null;
+            dto.ContactName = c.Contact != null ? c.Contact.Name : null;
             dto.SLATarget = c.SLA_Target__c != null ? c.SLA_Target__c : null;
 
             results.add(dto);

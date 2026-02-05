@@ -5,12 +5,8 @@
 import { LightningElement, wire, track } from 'lwc';
 
 import CASE_OBJECT from '@salesforce/schema/Case';
-import CASE_NUMBER_FIELD from '@salesforce/schema/Case.CaseNumber';
 import STATUS_FIELD from '@salesforce/schema/Case.Status';
 import PRIORITY_FIELD from '@salesforce/schema/Case.Priority';
-import CONTACT_NAME_FIELD from '@salesforce/schema/Case.Contact.Name';
-import SLA_TARGET_FIELD from '@salesforce/schema/Case.SLA_Target__c';
-import RECORD_TYPE_NAME_FIELD from '@salesforce/schema/Case.RecordType.Name';
 
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
@@ -29,22 +25,40 @@ export default class DynamicDataTable extends LightningElement {
   
   // Columns Definition
   columns = [
-    { label: 'Case Number', fieldName: 'CaseNumber', type: 'text'},
+    { label: 'Case Number', fieldName: 'caseUrl', type: 'url',
+      typeAttributes: {
+        label: { fieldName: 'CaseNumber' },
+        target: '_blank'
+      }
+    },
     { label: 'Status', fieldName: 'Status', type: 'text', editable: true },
     { label: 'Priority', fieldName: 'Priority', type: 'text' },
     { label: 'Record Type', fieldName: 'RecordTypeName', type: 'text' },
-    { label: 'Contact', fieldName: 'ContactId', type: 'text' },
+    { label: 'Contact', fieldName: 'contactUrl', type: 'url',
+      typeAttributes: {
+        label: { fieldName: 'ContactName' },
+        target: '_blank'
+      }
+    },
     { label: 'SLA Target', fieldName: 'SLA_Target__c', type: 'date' }
   ];
   
   @wire(getCases)
   wiredCases({ data, error }) {
-    if(data) {
-      this.tableData = data;
+    if(data) { // creates a clickable link for Contacts
+      this.tableData = data.map(item => ({
+        ...item,
+        contactUrl: item.ContactId ? '/' + item.ContactId : null,
+        caseUrl: '/' + item.Id
+      }));
       console.log('data received from wire:', data)
       this.filteredData = [...this.tableData];
       console.log('filtered data:', this.filteredData);
-      this.updateSlicedData();
+
+      // Set to priority filter to high upon page load
+      this.filters.priority = "High";
+      this.applyFilters();
+
       this.filteredDataCount = this.filteredData.length;
     }
     else if(error) {
@@ -105,7 +119,7 @@ export default class DynamicDataTable extends LightningElement {
     // The recordTypeInfos is a map, so iterate over the keys (record type IDs)
     this.recordTypeOptions = Object.keys(rtis).map(typeId => ({
       label: rtis[typeId].name,
-      value: rtis[typeId].name.toLowerCase(),
+      value: rtis[typeId].name,
       id: typeId // metadata
     }));
     console.log('our record type options are', this.recordTypeOptions);
@@ -130,12 +144,30 @@ export default class DynamicDataTable extends LightningElement {
   get recordTypeOptionsArr() {
     return this.recordTypeOptions;
   }
+
+  get resetButtonDisabled() {
+    if(Object.values(this.filters).every(value => value === '')) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  get prevButtonDisabled() {
+    return this.index === 0;
+  }
+
+  get nextButtonDisabled() {
+    const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
+    return this.index >= maxIndex;
+  }
   
   // Handle Filter Change
   handleFilterChange(event) {
     const filterType = event.target.dataset.filter;
-    const filterValue = event.target.value.toLowerCase();
-    console.log('value selected was', event.target.value.toLowerCase());
+    const filterValue = event.target.value;
+    console.log('value selected was', event.target.value);
     
     this.filters = { ...this.filters, [filterType]: filterValue };
     this.applyFilters();
@@ -151,10 +183,10 @@ export default class DynamicDataTable extends LightningElement {
     try {
       this.filteredData = this.tableData.filter(item => {
         console.log('item is:', item);
-        const status = (item.Status || '').toLowerCase();
-        const priority = (item.Priority || '').toLowerCase();
-        const recordType = (item.RecordTypeName || '').toLowerCase();
-        const contact = (item.ContactId || '').toLowerCase();
+        const status = (item.Status || '');
+        const priority = (item.Priority || '');
+        const recordType = (item.RecordTypeName || '');
+        const contact = (item.ContactName || '');
         console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
         return (
           (this.filters.status ? status === this.filters.status : true) &&
@@ -176,6 +208,7 @@ export default class DynamicDataTable extends LightningElement {
     this.filters = { status: '', priority: '', recordType: '', contact: '' };
     this.filteredData = [...this.tableData];
     this.updateSlicedData();
+    this.index = 0;
     
     // Reset UI Inputs
     this.template.querySelectorAll('lightning-input, lightning-combobox').forEach(input => {

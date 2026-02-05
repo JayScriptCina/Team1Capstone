@@ -1,6 +1,6 @@
 <template>
-  <lightning-card title="Dynamic Filter DataTable">
-    <div class="slds-grid slds-wrap slds-p-around_medium">
+  <lightning-card title="Case Console">
+    <div class="slds-grid slds-wrap slds-p-horizontal_medium slds-p-bottom_x-small">
       
       <!-- Status Filter -->
       <div class="slds-col slds-size_1-of-5">
@@ -16,6 +16,7 @@
       <div class="slds-col slds-size_1-of-5">
         <lightning-combobox
         label="Priority"
+        value={filters.priority}
         options={priorityOptionsArr}
         onchange={handleFilterChange}
         data-filter="priority"
@@ -44,26 +45,24 @@
       
       
       <!-- Reset Button -->
-      <div class="slds-col slds-size_1-of-5 slds-m-top_medium">
+      <div class="slds-col slds-size_1-of-5 slds-m-top_large">
         <lightning-button 
         label="Reset Filters" 
         variant="neutral" 
+        disabled={resetButtonDisabled}
+        class="slds-m-horizontal_x-small"
         onclick={resetFilters}
         ></lightning-button>
       </div>
     </div>
-
-    <div>
-      <p>
-        Total cases with these filters is {filteredDataCount}
-        increment is {increment}
-        index is {index}
-        offset is {rowOffset}
-      </p>
+    
+    <div class="slds-p-horizontal_medium slds-p-bottom_x-small">
       <!-- Prev Button -->
       <lightning-button 
       label="Previous" 
       variant="neutral" 
+      class="slds-m-right_x-small"
+      disabled={prevButtonDisabled}
       onclick={handlePrevious}
       ></lightning-button>
       
@@ -71,8 +70,11 @@
       <lightning-button 
       label="Next" 
       variant="neutral" 
+      disabled={nextButtonDisabled}
       onclick={handleNext}
       ></lightning-button>
+
+
     </div>
     
     <!-- DataTable -->
