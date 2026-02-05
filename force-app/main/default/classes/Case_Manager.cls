@@ -37,7 +37,7 @@ public with sharing class Case_Manager {
     /* LWC data-retrieval functions below - Jay Cina */
 
     // Returns the Case Providers the user has access to in SF database
-    // used in caseConsole LWC
+    // used in providerInteraction LWC
     @AuraEnabled(cacheable=true)
     public static List<Case_Provider__c> getCaseProviders() {
         return [
@@ -48,16 +48,40 @@ public with sharing class Case_Manager {
         ];
     }
 
+    public class CaseDTO {
+        @AuraEnabled public Id Id;
+        @AuraEnabled public String CaseNumber;
+        @AuraEnabled public String Status;
+        @AuraEnabled public String Priority;
+        @AuraEnabled public String RecordTypeName;
+        @AuraEnabled public String ContactId;
+        @AuraEnabled public Datetime SLATarget;
+    }
+
     // Returns the Cases the user has access to in SF database
-    // Used in providerInteraction LWC
+    // Used in caseConsole LWC
     @AuraEnabled(cacheable=true)
-    public static List<Case> getCases() {
-        return [
+    public static List<CaseDTO> getCases() {
+        List<CaseDTO> results = new List<CaseDTO>();
+        for (Case c : [
             SELECT Id, CaseNumber, RecordType.Name, OwnerId, Description, Priority, SLA_Target__c, SLAViolation__c, Status, Subject, Triage_Category__c,
             Case_Provider__c,
             AccountId, ContactId, ContactPhone
             FROM Case
-            WITH USER_MODE
-        ];
+            //WITH USER_MODE
+        ]) {
+            CaseDTO dto = new CaseDTO();
+            dto.Id = c.Id;
+            dto.CaseNumber = c.CaseNumber;
+            dto.Status = c.Status;
+            dto.Priority = c.Priority;
+            dto.RecordTypeName = c.RecordType.Name != null ? c.RecordType.Name : null;
+            dto.ContactId = c.ContactId != null ? c.ContactId : null;
+            dto.SLATarget = c.SLA_Target__c != null ? c.SLA_Target__c : null;
+
+            results.add(dto);
+            }
+
+        return results;
     }
 }

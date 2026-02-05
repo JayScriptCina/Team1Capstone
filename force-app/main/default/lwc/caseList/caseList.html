@@ -21,7 +21,7 @@
         data-filter="priority"
         ></lightning-combobox>
       </div>
-
+      
       <!-- Record Type Filter -->
       <div class="slds-col slds-size_1-of-5">
         <lightning-combobox
@@ -52,13 +52,36 @@
         ></lightning-button>
       </div>
     </div>
+
+    <div>
+      <p>
+        Total cases with these filters is {filteredDataCount}
+        increment is {increment}
+        index is {index}
+        offset is {rowOffset}
+      </p>
+      <!-- Prev Button -->
+      <lightning-button 
+      label="Previous" 
+      variant="neutral" 
+      onclick={handlePrevious}
+      ></lightning-button>
+      
+      <!-- Next Button -->
+      <lightning-button 
+      label="Next" 
+      variant="neutral" 
+      onclick={handleNext}
+      ></lightning-button>
+    </div>
     
     <!-- DataTable -->
     <lightning-datatable 
     key-field="id"
-    data={filteredData}
+    data={slicedData}
     columns={columns}
     hide-checkbox-column="true"
+    row-number-offset={rowOffset}
     ></lightning-datatable>
   </lightning-card>
 </template>
