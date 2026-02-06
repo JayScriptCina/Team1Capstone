@@ -1,58 +1,154 @@
 <template>
   <div>
     <c-sla-countdown
-      date={SLATargetDate}>
-    </c-sla-countdown>
-  </div>
-  
-  <!-- Record Detail Panel -->
-  <lightning-card title="Record Detail" icon-name="standard:record">
-    <div class="slds-p-horizontal_small">
-      <lightning-record-edit-form
-      record-id={recordId}
-      object-api-name='Case'
-      onsuccess={handleSuccess}>
-      <template if:true={recordId}>
+    date={SLATargetDate}>
+  </c-sla-countdown>
+</div>
+
+<!-- Record Detail Panel -->
+<lightning-card title="Record Detail" icon-name="standard:record">
+  <div class="slds-p-horizontal_small">
+    <lightning-record-edit-form
+    record-id={recordId}
+    object-api-name='Case'
+    onsuccess={handleSuccess}>
+    <template if:true={recordId}>
       <template if:false={isEditMode}>
         <div class="slds-box slds-theme_default">
+
+          <!-- Edit Button  -->
           <div class="slds-var-m-bottom_x-small">
             <lightning-button variant="brand" label="Edit Record" onclick={handleEdit}></lightning-button>
           </div>
-          <lightning-output-field field-name="CaseNumber"></lightning-output-field>
-          <lightning-output-field field-name="ContactId"></lightning-output-field>
-          <lightning-output-field field-name="Subject"></lightning-output-field>
-          <lightning-output-field field-name="OwnerId"></lightning-output-field>
+          
+          <!-- Row 1  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="CaseNumber"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="OwnerId"></lightning-output-field>
+            </div>
+          </div>
+          
+          <!-- Row 2  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="ContactId"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="ContactEmail"></lightning-output-field>
+            </div>
+          </div>
+          
+          <!-- Row 3  -->
+          <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="ContactPhone"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="AccountId"></lightning-output-field>
+            </div>
+          </div>
+
+          <!-- Rows 4 and 5  -->
+          <lightning-output-field field-name="Subject"></lightning-output-field> 
           <lightning-output-field field-name="Description"></lightning-output-field>
-          <lightning-output-field field-name="SLA_Target__c"></lightning-output-field>
-          <lightning-output-field field-name="SLAViolation__c"></lightning-output-field>
-          <lightning-output-field field-name="Triage_Category__c"></lightning-output-field>
-          <lightning-output-field field-name="AccountId"></lightning-output-field>
-          <lightning-output-field field-name="ContactPhone"></lightning-output-field>
+          
+          <!-- Row 6  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="SLA_Target__c"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="SLAViolation__c"></lightning-output-field>
+            </div>
+          </div>
+          
+          <!-- Row 7  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="Status"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="Triage_Category__c"></lightning-output-field>
+            </div>
+          </div>
+
+          <!-- Row 8  -->
           <lightning-output-field field-name="Case_Provider__c"></lightning-output-field>
         </div>
       </template>
       
       <template if:true={isEditMode}>
         <div class="slds-box slds-theme_default">
-          <lightning-input-field field-name="CaseNumber"></lightning-input-field>
-          <lightning-input-field field-name="ContactId"></lightning-input-field>
-          <lightning-input-field field-name="Subject"></lightning-input-field>
-          <lightning-input-field field-name="OwnerId"></lightning-input-field>
-          <lightning-input-field field-name="Description"></lightning-input-field>
-          <lightning-input-field field-name="SLA_Target__c"></lightning-input-field>
-          <lightning-input-field field-name="SLAViolation__c"></lightning-input-field>
-          <lightning-input-field field-name="Triage_Category__c"></lightning-input-field>
-          <lightning-input-field field-name="AccountId"></lightning-input-field>
-          <lightning-input-field field-name="ContactPhone"></lightning-input-field>
-          <lightning-input-field field-name="Case_Provider__c"></lightning-input-field>
+          
+          <!-- Row 1  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="CaseNumber" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="OwnerId" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+          </div>
+          
+          <!-- Row 2  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="ContactId" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="ContactEmail" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+          </div>
+          
+          <!-- Row 3  -->
+          <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="ContactPhone" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="AccountId" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+          </div>
+
+          <!-- Rows 4 and 5  -->
+          <lightning-input-field field-name="Subject" onchange={handleFieldChange}></lightning-input-field> 
+          <lightning-input-field field-name="Description" onchange={handleFieldChange}></lightning-input-field>
+
+          <!-- Row 6 -->
+          <lightning-input-field field-name="SLA_Target__c" onchange={handleFieldChange}></lightning-input-field>
+          <lightning-input-field field-name="SLAViolation__c" onchange={handleFieldChange}></lightning-input-field>
+
+          <!-- Row 7  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="Status" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input-field field-name="Triage_Category__c" onchange={handleFieldChange}></lightning-input-field>
+            </div>
+          </div>
+
+          <!-- Row 8  -->
+          <lightning-input-field field-name="Case_Provider__c" onchange={handleFieldChange}></lightning-input-field>
+          
+          <!-- Save and Cancel Buttons  -->
           <div class="slds-var-m-top_medium">
-            <lightning-button variant="brand" type="submit" label={saveButtonLabel} onclick={handleSave} disabled={isSaving}></lightning-button>
+            <lightning-button
+              variant="brand"
+              type="submit"
+              label={saveButtonLabel}
+              onclick={handleSave}
+              disabled={isSaveDisabled}>
+            </lightning-button>
             <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
           </div>
         </div>
       </template>
-      </template>
-    </lightning-record-edit-form>
-  </div>
+    </template>
+  </lightning-record-edit-form>
+</div>
 </lightning-card>
 </template>

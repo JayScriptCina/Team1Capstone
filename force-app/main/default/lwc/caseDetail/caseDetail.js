@@ -2,19 +2,41 @@ import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class CaseDetail extends LightningElement {
-  @api recordData;
+  @track _recordData;
   @track isEditMode = false;
   @track isSaving = false;
+  @track isDirty = false;
   @track saveButtonLabel = "Save";
   
+  @api
+  get recordData() {
+    return this._recordData;
+  }
+  set recordData(value) {
+    if (this.isDirty) {
+      this.showUnsavedDataToast();
+      return;
+    }
+
+    if(!value) return;
+    this._recordData = value
+  }
 
   get recordId() {
     console.log("recordData from get recordId:", this.recordData);
-    return this.recordData?.Id;
+    return this._recordData?.Id;
   }
 
   get SLATargetDate() {
-    return this.recordData?.SLATarget || null;
+    return this._recordData?.SLATarget || null;
+  }
+
+  get isSaveDisabled() {
+    return !this.isDirty || this.isSaving;
+  }
+
+  handleFieldChange() {
+    this.isDirty = true;
   }
   
   handleEdit() {
@@ -22,6 +44,7 @@ export default class CaseDetail extends LightningElement {
   }
   
   handleCancel() {
+    this.isDirty = false;
     this.isEditMode = false;
   }
 
@@ -31,13 +54,24 @@ export default class CaseDetail extends LightningElement {
   }
   
   handleSuccess() {
+    this.isDirty = false;
     this.isEditMode = false;
     this.isSaving = false;
-    // TO-DO: show toast and reload cache
-    this.showToast();
+    this.showSavedDataToast();
+  }
+
+  showUnsavedDataToast() {
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: 'Unsaved Changes',
+        message: 'You have unsaved data. Please save before navigating away.',
+        variant: 'warning',
+        mode: 'dismissible'
+      })
+    );
   }
   
-  showToast() {
+  showSavedDataToast() {
     this.dispatchEvent(
       new ShowToastEvent({
         title: 'Success',
