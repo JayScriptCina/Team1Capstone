@@ -1,6 +1,6 @@
 // Name: Jay Cina
 // Date: 02/04/2026
-// Desc: A console which displays a dynamic list (caseList.js) and a details panel if a case is clicked
+// Desc: A console which displays a dynamic list (caseList) and a details panel (caseDetail) if a case is clicked
 import { LightningElement, wire, track } from 'lwc';
 
 import CASE_OBJECT from '@salesforce/schema/Case';
@@ -18,6 +18,7 @@ export default class CaseConsole extends LightningElement {
   @track priorityOptions = [];
   @track recordTypeOptions = [];
   caseRecordTypeId;
+  @track recordDetailData = [];
   
   // 1. Get Case data in USER_MODE!
   @wire(getCases)
@@ -81,6 +82,16 @@ export default class CaseConsole extends LightningElement {
       console.log('Priority Values:', this.statusOptions);
     } else if (error) {
       console.error('Error fetching status picklist values', error);
+    }
+  }
+
+  handleRowAction(event) {
+    const actionName = event.detail.action.name;
+    const rowData = event.detail.row;
+
+    if(actionName === 'view_details') {
+      console.log('Clicked row data:', rowData);
+      this.recordDetailData = rowData;
     }
   }
 }

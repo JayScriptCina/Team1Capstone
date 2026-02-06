@@ -1,5 +1,5 @@
 <template>
-  <lightning-card title="Case Console">
+  <lightning-card title="Case Console" icon-name="standard:case">
     <div class="slds-grid slds-wrap slds-p-horizontal_medium slds-p-bottom_x-small">
       
       <!-- Status Filter -->
@@ -84,6 +84,7 @@
     columns={columns}
     hide-checkbox-column="true"
     row-number-offset={rowOffset}
+    onrowaction={handleRowAction}
     ></lightning-datatable>
   </lightning-card>
 </template>

@@ -6,7 +6,7 @@ import { LightningElement, api, track } from 'lwc';
 
 export default class DynamicDataTable extends LightningElement {
   // Data from caseConsole LWC
-  @api cases = [];
+  _cases = [];
   @api priorityOptions = [];
   @api statusOptions = [];
   @api recordTypeOptions = [];
@@ -18,8 +18,9 @@ export default class DynamicDataTable extends LightningElement {
   @track filters = { status: '', priority: '', recordType: '', contact: '' };
   @track filteredDataCount;
 
-  index = 0; // used for limiting the number of records shown in the list
-  increment = 10;
+  // Variables for datatable pagination
+  index = 0;
+  increment = 6;
   
   // Columns Definition
   columns = [
@@ -38,12 +39,28 @@ export default class DynamicDataTable extends LightningElement {
         target: '_blank'
       }
     },
-    { label: 'SLA Target', fieldName: 'SLA_Target__c', type: 'date' }
+    { label: 'SLA Target', fieldName: 'SLA_Target__c', type: 'date' },
+    {
+      type: 'button',
+      typeAttributes: {
+        label: 'More Details →',
+        name: 'view_details',
+        variant: 'base'
+      }
+    }
   ];
 
-  // Runs as a constructor, fetching data from the parent 
-  connectedCallback() {
-    this.tableData = [...this.cases];
+  @api
+  get cases() {
+    return this._cases;
+  }
+  set cases(value) {
+    this._cases = value || [];
+    this.initializeData();
+  }
+  
+  initializeData() {
+    this.tableData = [...this._cases];
     this.filteredData = [...this.tableData];
     console.log('filtered data:', this.filteredData);
 
@@ -52,15 +69,6 @@ export default class DynamicDataTable extends LightningElement {
     this.applyFilters();
 
     this.filteredDataCount = this.filteredData.length;
-  }
-  
-  // Reacts when the parent (caseConsole.js) data changes
-  // for example, a reloaded SOQL query button
-  renderedCallback() {
-    if (this.tableData.length !== this.cases.length) {
-      this.tableData = [...this.cases];
-      this.applyFilters();
-    }
   }
   
   // Used for pagination of the lwc datatable
@@ -109,6 +117,10 @@ export default class DynamicDataTable extends LightningElement {
     
     this.filters = { ...this.filters, [filterType]: filterValue };
     this.applyFilters();
+  }
+
+  handleRowAction(event) {
+    this.dispatchEvent(new CustomEvent('handlerowaction', event));
   }
   
   updateSlicedData() {

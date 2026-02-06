@@ -1,14 +1,85 @@
 <template>
+
+  <!-- SLA CountDown -->
+  <lightning-card title="SLA Countdown" icon-name="utility:clock">
+    <div class="slds-var-p-horizontal_small">
+      <template if:true={isExpired}>
+        <p class="slds-text-heading_small slds-text-color_error">SLA Violated!</p>
+      </template>
+      <template if:false={isExpired}>
+        <div class="slds-grid slds-wrap">
+          <div class="slds-col slds-size_1-of-7">
+            <p class="slds-text-align_center timer-number">{days} day</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="slds-text-align_center timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="slds-text-align_center timer-number">{hours}<br>hour</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="slds-text-align_center timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <span>{minutes} minute</span>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="slds-text-align_center timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <span>{seconds} second</span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </lightning-card>
+  
+  <!-- Record Detail Panel -->
   <lightning-card title="Record Detail" icon-name="standard:record">
     <div class="slds-p-horizontal_small">
-      <lightning-record-view-form
+      <lightning-record-edit-form
       record-id={recordId}
-      object-api-name={objectApiName}>
-      <div class="slds-box slds-theme_default">
-        <lightning-output-field field-name="Name"></lightning-output-field>
-        <lightning-output-field field-name="Phone"></lightning-output-field>
-      </div>
-    </lightning-record-view-form>
+      object-api-name='Case'
+      onsuccess={handleSuccess}>
+      <template if:true={recordId}>
+      <template if:false={isEditMode}>
+        <div class="slds-box slds-theme_default">
+          <div class="slds-var-m-bottom_x-small">
+            <lightning-button variant="brand" label="Edit Record" onclick={handleEdit}></lightning-button>
+          </div>
+          <lightning-output-field field-name="CaseNumber"></lightning-output-field>
+          <lightning-output-field field-name="ContactId"></lightning-output-field>
+          <lightning-output-field field-name="Subject"></lightning-output-field>
+          <lightning-output-field field-name="OwnerId"></lightning-output-field>
+          <lightning-output-field field-name="Description"></lightning-output-field>
+          <lightning-output-field field-name="SLAViolation__c"></lightning-output-field>
+          <lightning-output-field field-name="Triage_Category__c"></lightning-output-field>
+          <lightning-output-field field-name="AccountId"></lightning-output-field>
+          <lightning-output-field field-name="ContactPhone"></lightning-output-field>
+          <lightning-output-field field-name="Case_Provider__c"></lightning-output-field>
+        </div>
+      </template>
+      
+      <template if:true={isEditMode}>
+        <div class="slds-box slds-theme_default">
+          <lightning-input-field field-name="CaseNumber"></lightning-input-field>
+          <lightning-input-field field-name="ContactId"></lightning-input-field>
+          <lightning-input-field field-name="Subject"></lightning-input-field>
+          <lightning-input-field field-name="OwnerId"></lightning-input-field>
+          <lightning-input-field field-name="Description"></lightning-input-field>
+          <lightning-input-field field-name="SLAViolation__c"></lightning-input-field>
+          <lightning-input-field field-name="Triage_Category__c"></lightning-input-field>
+          <lightning-input-field field-name="AccountId"></lightning-input-field>
+          <lightning-input-field field-name="ContactPhone"></lightning-input-field>
+          <lightning-input-field field-name="Case_Provider__c"></lightning-input-field>
+          <div class="slds-var-m-top_medium">
+            <lightning-button variant="brand" label={saveButtonLabel} onclick={handleSave} disabled={isSaving}></lightning-button>
+            <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+          </div>
+        </div>
+      </template>
+      </template>
+    </lightning-record-edit-form>
   </div>
 </lightning-card>
 </template>
