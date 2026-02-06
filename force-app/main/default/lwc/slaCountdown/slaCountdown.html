@@ -1,0 +1,35 @@
+<template>
+  <!-- SLA CountDown -->
+  <lightning-card title="SLA Countdown" icon-name="utility:clock">
+    <div class="slds-var-p-horizontal_small">
+      <template if:true={isExpired}>
+        <p class="slds-text-heading_small slds-text-color_error">SLA Violated!</p>
+      </template>
+      <template if:false={isExpired}>
+        <div class="slds-grid slds-wrap slds-text-align_center">
+          <div class="slds-col slds-size_1-of-7">
+            <p class="timer-number">{days}<br>day</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="timer-number">{hours}<br>hour</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <span>{minutes}<br>minute</span>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <p class="timer-inbetween">:</p>
+          </div>
+          <div class="slds-col slds-size_1-of-7">
+            <span>{seconds}<br>second</span>
+          </div>
+        </div>
+      </template>
+    </div>
+  </lightning-card>
+</template>
