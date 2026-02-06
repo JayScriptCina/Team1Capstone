@@ -6,6 +6,7 @@
       <div class="slds-col slds-size_1-of-5">
         <lightning-combobox
         label="Status" 
+        value={filters.status}
         options={statusOptionsArr}
         onchange={handleFilterChange}
         data-filter="status"
@@ -73,8 +74,6 @@
       disabled={nextButtonDisabled}
       onclick={handleNext}
       ></lightning-button>
-
-
     </div>
     
     <!-- DataTable -->
@@ -86,5 +85,10 @@
     row-number-offset={rowOffset}
     onrowaction={handleRowAction}
     ></lightning-datatable>
+
+    <!-- No Records Message -->
+    <template if:false={hasData}>
+      <p style="text-align:center; padding:20px;">There are currently no records to show.</p>
+    </template>
   </lightning-card>
 </template>

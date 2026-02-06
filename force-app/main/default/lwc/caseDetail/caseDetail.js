@@ -14,7 +14,7 @@ export default class CaseDetail extends LightningElement {
   }
 
   get SLATargetDate() {
-    return this.recordData?.SLATarget || 'No date provided';
+    return this.recordData?.SLATarget || null;
   }
   
   handleEdit() {
@@ -26,14 +26,11 @@ export default class CaseDetail extends LightningElement {
   }
 
   handleSave() {
-    console.log("HandleSave has been called");
     this.saveButtonLabel = 'Saving...';
     this.isSaving = true;
-    console.log("HandleSave has reached the end");
   }
   
   handleSuccess() {
-    console.log("HandleSuccess has been called");
     this.isEditMode = false;
     this.isSaving = false;
     // TO-DO: show toast and reload cache

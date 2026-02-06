@@ -16,13 +16,11 @@ export default class SlaCountdown extends LightningElement {
     return this._date;
   }
   set date(value) {
-    console.log('date value received:', value);
+    this.clearCountdown();
 
     if(!value) return;
 
-    this._date = value // 2026-07-25T00:00:00
-    console.log('date value is now:', this._date);
-
+    this._date = value
     this.startCountdown();
   }
 
@@ -47,5 +45,14 @@ export default class SlaCountdown extends LightningElement {
       this.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       this.seconds = Math.floor((distance % (1000 * 60)) / 1000);
     }, 1000);
+  }
+
+  clearCountdown() {
+    this.days = 0;
+    this.hours = 0;
+    this.minutes = 0;
+    this.seconds = 0;
+
+    clearInterval(this.timerInterval);
   }
 }

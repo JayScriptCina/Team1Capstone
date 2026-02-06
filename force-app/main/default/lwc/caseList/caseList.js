@@ -17,7 +17,7 @@ export default class DynamicDataTable extends LightningElement {
   @track slicedData = [];
   @track filters = { status: '', priority: '', recordType: '', contact: '' };
   @track filteredDataCount;
-
+  
   // Variables for datatable pagination
   index = 0;
   increment = 6;
@@ -39,7 +39,7 @@ export default class DynamicDataTable extends LightningElement {
         target: '_blank'
       }
     },
-    { label: 'SLA Target', fieldName: 'SLA_Target__c', type: 'date' },
+    { label: 'SLA Target', fieldName: 'SLATarget', type: 'date' },
     {
       type: 'button',
       typeAttributes: {
@@ -49,7 +49,7 @@ export default class DynamicDataTable extends LightningElement {
       }
     }
   ];
-
+  
   @api
   get cases() {
     return this._cases;
@@ -58,17 +58,22 @@ export default class DynamicDataTable extends LightningElement {
     this._cases = value || [];
     this.initializeData();
   }
-  
+
   initializeData() {
     this.tableData = [...this._cases];
     this.filteredData = [...this.tableData];
     console.log('filtered data:', this.filteredData);
-
+    
     // Set the priority filter to high upon page load
     this.filters.priority = "High";
+    this.filters.status = "Not Closed";
     this.applyFilters();
-
+    
     this.filteredDataCount = this.filteredData.length;
+  }
+
+  get hasData() {
+    return this.filteredData && this.filteredData.length > 0;
   }
   
   // Used for pagination of the lwc datatable
@@ -90,7 +95,7 @@ export default class DynamicDataTable extends LightningElement {
   get recordTypeOptionsArr() {
     return this.recordTypeOptions;
   }
-
+  
   get resetButtonDisabled() {
     if(Object.values(this.filters).every(value => value === '')) {
       return true;
@@ -99,11 +104,11 @@ export default class DynamicDataTable extends LightningElement {
       return false;
     }
   }
-
+  
   get prevButtonDisabled() {
     return this.index === 0; // true if we are at page 1
   }
-
+  
   get nextButtonDisabled() {
     const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
     return this.index >= maxIndex; // true if we are at the final page
@@ -118,7 +123,7 @@ export default class DynamicDataTable extends LightningElement {
     this.filters = { ...this.filters, [filterType]: filterValue };
     this.applyFilters();
   }
-
+  
   handleRowAction(event) {
     this.dispatchEvent(new CustomEvent('handlerowaction', event));
   }
@@ -139,7 +144,11 @@ export default class DynamicDataTable extends LightningElement {
         const contact = (item.ContactName || '');
         // console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
         return (
-          (this.filters.status ? status === this.filters.status : true) &&
+          (
+            !this.filters.status
+            ? true : this.filters.status === 'Not Closed'
+            ? status !== 'Closed' : status === this.filters.status
+          ) &&
           (this.filters.priority ? priority === this.filters.priority : true) &&
           (this.filters.recordType ? recordType === this.filters.recordType : true) &&
           (this.filters.contact ? contact.includes(this.filters.contact) : true)

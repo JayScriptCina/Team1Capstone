@@ -78,7 +78,10 @@ export default class CaseConsole extends LightningElement {
   })
   wiredStatusPicklist({ data, error }) {
     if (data) {
-      this.statusOptions = data.values;
+      this.statusOptions = [
+        { label: 'Not Closed', value: 'Not Closed' },  // adds another value to the picklist
+        ...data.values
+      ];
       console.log('Priority Values:', this.statusOptions);
     } else if (error) {
       console.error('Error fetching status picklist values', error);
@@ -90,7 +93,6 @@ export default class CaseConsole extends LightningElement {
     const rowData = event.detail.row;
 
     if(actionName === 'view_details') {
-      console.log('Clicked row data:', rowData);
       this.recordDetailData = rowData;
     }
   }

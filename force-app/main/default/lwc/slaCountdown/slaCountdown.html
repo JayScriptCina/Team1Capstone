@@ -2,31 +2,33 @@
   <!-- SLA CountDown -->
   <lightning-card title="SLA Countdown" icon-name="utility:clock">
     <div class="slds-var-p-horizontal_small">
+
       <template if:true={isExpired}>
         <p class="slds-text-heading_small slds-text-color_error">SLA Violated!</p>
       </template>
+
       <template if:false={isExpired}>
-        <div class="slds-grid slds-wrap slds-text-align_center">
+        <div class="slds-grid slds-wrap slds-text-align_center timer-number">
           <div class="slds-col slds-size_1-of-7">
             <p class="timer-number">{days}<br>day</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="timer-inbetween">:</p>
+            <p class="timer-separator">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
             <p class="timer-number">{hours}<br>hour</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="timer-inbetween">:</p>
+            <p class="timer-separator">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <span>{minutes}<br>minute</span>
+            <p class="timer-number">{minutes}<br>minute</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="timer-inbetween">:</p>
+            <p class="timer-separator">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <span>{seconds}<br>second</span>
+            <p>{seconds}<br>second</p>
           </div>
         </div>
       </template>
