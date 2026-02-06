@@ -113,6 +113,10 @@ export default class DynamicDataTable extends LightningElement {
     const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
     return this.index >= maxIndex; // true if we are at the final page
   }
+
+  get maxIndex() {
+    return Math.floor((this.filteredData.length - 1) / this.increment);
+  }
   
   // Handle Filter Change
   handleFilterChange(event) {

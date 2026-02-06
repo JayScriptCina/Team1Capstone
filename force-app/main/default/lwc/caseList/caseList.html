@@ -57,7 +57,7 @@
       </div>
     </div>
     
-    <div class="slds-p-horizontal_medium slds-p-bottom_x-small">
+    <div class="slds-m-horizontal_medium slds-p-bottom_x-small slds-grid">
       <!-- Prev Button -->
       <lightning-button 
       label="Previous" 
@@ -74,6 +74,10 @@
       disabled={nextButtonDisabled}
       onclick={handleNext}
       ></lightning-button>
+
+      <div class="slds-text-color_weak slds-m-horizontal_small slds-align_absolute-center">
+        Page {index} of {maxIndex}
+      </div>
     </div>
     
     <!-- DataTable -->
