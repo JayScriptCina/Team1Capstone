@@ -8,6 +8,10 @@
         <!-- Main Column -->
         <main class="main">
           <c-case-list
+            cases={cases}
+            status-options={statusOptions}
+            priority-options={priorityOptions}
+            record-type-options={recordTypeOptions}
             onhandlerowaction={handleRowAction}>
           </c-case-list>     
         </main>

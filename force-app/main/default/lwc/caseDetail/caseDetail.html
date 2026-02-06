@@ -1,3 +1,14 @@
 <template>
-    <lightning-card title = 'caseDetail here!'></lightning-card>
+  <lightning-card title="Record Detail" icon-name="standard:record">
+    <div class="slds-p-horizontal_small">
+      <lightning-record-view-form
+      record-id={recordId}
+      object-api-name={objectApiName}>
+      <div class="slds-box slds-theme_default">
+        <lightning-output-field field-name="Name"></lightning-output-field>
+        <lightning-output-field field-name="Phone"></lightning-output-field>
+      </div>
+    </lightning-record-view-form>
+  </div>
+</lightning-card>
 </template>
