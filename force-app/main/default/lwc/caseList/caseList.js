@@ -132,12 +132,12 @@ export default class DynamicDataTable extends LightningElement {
     
     try {
       this.filteredData = this.tableData.filter(item => {
-        console.log('item is:', item);
+        // console.log('item is:', item);
         const status = (item.Status || '');
         const priority = (item.Priority || '');
         const recordType = (item.RecordTypeName || '');
         const contact = (item.ContactName || '');
-        console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
+        // console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
         return (
           (this.filters.status ? status === this.filters.status : true) &&
           (this.filters.priority ? priority === this.filters.priority : true) &&

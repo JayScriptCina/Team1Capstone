@@ -7,27 +7,27 @@
         <p class="slds-text-heading_small slds-text-color_error">SLA Violated!</p>
       </template>
       <template if:false={isExpired}>
-        <div class="slds-grid slds-wrap">
+        <div class="slds-grid slds-wrap slds-text-align_center">
           <div class="slds-col slds-size_1-of-7">
-            <p class="slds-text-align_center timer-number">{days} day</p>
+            <p class="timer-number">{days}<br>day</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="slds-text-align_center timer-inbetween">:</p>
+            <p class="timer-inbetween">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="slds-text-align_center timer-number">{hours}<br>hour</p>
+            <p class="timer-number">{hours}<br>hour</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="slds-text-align_center timer-inbetween">:</p>
+            <p class="timer-inbetween">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <span>{minutes} minute</span>
+            <span>{minutes}<br>minute</span>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <p class="slds-text-align_center timer-inbetween">:</p>
+            <p class="timer-inbetween">:</p>
           </div>
           <div class="slds-col slds-size_1-of-7">
-            <span>{seconds} second</span>
+            <span>{seconds}<br>second</span>
           </div>
         </div>
       </template>
@@ -52,6 +52,7 @@
           <lightning-output-field field-name="Subject"></lightning-output-field>
           <lightning-output-field field-name="OwnerId"></lightning-output-field>
           <lightning-output-field field-name="Description"></lightning-output-field>
+          <lightning-output-field field-name="SLA_Target__c"></lightning-output-field>
           <lightning-output-field field-name="SLAViolation__c"></lightning-output-field>
           <lightning-output-field field-name="Triage_Category__c"></lightning-output-field>
           <lightning-output-field field-name="AccountId"></lightning-output-field>
@@ -67,13 +68,14 @@
           <lightning-input-field field-name="Subject"></lightning-input-field>
           <lightning-input-field field-name="OwnerId"></lightning-input-field>
           <lightning-input-field field-name="Description"></lightning-input-field>
+          <lightning-input-field field-name="SLA_Target__c"></lightning-input-field>
           <lightning-input-field field-name="SLAViolation__c"></lightning-input-field>
           <lightning-input-field field-name="Triage_Category__c"></lightning-input-field>
           <lightning-input-field field-name="AccountId"></lightning-input-field>
           <lightning-input-field field-name="ContactPhone"></lightning-input-field>
           <lightning-input-field field-name="Case_Provider__c"></lightning-input-field>
           <div class="slds-var-m-top_medium">
-            <lightning-button variant="brand" label={saveButtonLabel} onclick={handleSave} disabled={isSaving}></lightning-button>
+            <lightning-button variant="brand" type="submit" label={saveButtonLabel} onclick={handleSave} disabled={isSaving}></lightning-button>
             <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
           </div>
         </div>

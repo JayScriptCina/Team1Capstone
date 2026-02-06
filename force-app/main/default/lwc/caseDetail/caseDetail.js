@@ -56,11 +56,13 @@ export default class CaseDetail extends LightningElement {
 
   handleSave() {
     console.log("HandleSave has been called");
-    saveButtonLabel = 'Saving...';
+    this.saveButtonLabel = 'Saving...';
     this.isSaving = true;
+    console.log("HandleSave has reached the end");
   }
   
   handleSuccess() {
+    console.log("HandleSuccess has been called");
     this.isEditMode = false;
     this.isSaving = false;
     // TO-DO: show toast and reload cache
@@ -70,11 +72,15 @@ export default class CaseDetail extends LightningElement {
   showToast() {
     this.dispatchEvent(
       new ShowToastEvent({
-        title: 'Action Successful',
-        message: 'Record updated successfully',
+        title: 'Success',
+        message: 'Case updated successfully',
         variant: 'success',
         mode: 'dismissable'
       })
     );
+  }
+
+  handleChange(event) {
+    console.log(event);
   }
 }
