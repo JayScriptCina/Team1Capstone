@@ -10,7 +10,9 @@
             status-options={statusOptions}
             priority-options={priorityOptions}
             record-type-options={recordTypeOptions}
-            onhandlerowaction={handleRowAction}>
+            onhandlerowaction={handleRowAction}
+            onrefreshbutton={handleRefreshButton}
+            >
           </c-case-list>     
         </main>
 
@@ -19,6 +21,8 @@
           <c-case-detail
             class="slds-show"
             record-data={recordDetailData}
+            onrefreshbutton={handleRefreshButton}
+            onrevokerecordchange={handleRevokeRecordChange}
           ></c-case-detail>
         </aside>
 

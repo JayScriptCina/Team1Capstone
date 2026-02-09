@@ -2,7 +2,7 @@ import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 export default class CaseDetail extends LightningElement {
-  @track _recordData;
+  _recordData;
   @track isEditMode = false;
   @track isSaving = false;
   @track isDirty = false;
@@ -15,7 +15,12 @@ export default class CaseDetail extends LightningElement {
   set recordData(value) {
     // When "More Details" is clicked for a different Case, unsaved data shouldn't be lost
     if (this.isDirty) {
-      this.showUnsavedDataToast();
+      if(value != this._recordData) { // if the incoming value matches, this means it has been already revoked and should not be called again
+        dispatchEvent(CustomEvent('revokerecordchange', {
+          detail: this._recordData.Id
+      }));
+        this.showUnsavedDataToast();
+      }
       return;
     }
 
@@ -25,7 +30,9 @@ export default class CaseDetail extends LightningElement {
     }
 
     if(!value) return;
-    this._recordData = value
+
+    this._recordData = value;
+    console.log('_recordData in caseDetail.js has been updated');
   }
 
   get recordId() {
@@ -64,7 +71,13 @@ export default class CaseDetail extends LightningElement {
     this.isDirty = false;
     this.isEditMode = false;
     this.isSaving = false;
+    this.saveButtonLabel = 'Save';
     this.showSavedDataToast();
+    this.handleRefresh();
+  }
+
+  handleRefresh() {
+    this.dispatchEvent(new CustomEvent('refreshbutton'));
   }
 
   showUnsavedDataToast() {

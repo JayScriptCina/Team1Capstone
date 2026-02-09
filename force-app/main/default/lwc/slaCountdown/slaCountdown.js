@@ -17,11 +17,11 @@ export default class SlaCountdown extends LightningElement {
   }
   set date(value) {
     this.clearCountdown();
-
-    if(!value) return;
-
     this._date = value
-    this.startCountdown();
+
+    if(value) {
+      this.startCountdown();
+    }
   }
 
   startCountdown() {
@@ -52,6 +52,7 @@ export default class SlaCountdown extends LightningElement {
     this.hours = 0;
     this.minutes = 0;
     this.seconds = 0;
+    this.isExpired = false;
 
     clearInterval(this.timerInterval);
   }

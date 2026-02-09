@@ -1,6 +1,8 @@
 // Name: Jay Cina
 // Date: 02/04/2026
 // Desc: A console which displays a dynamic list (caseList) and a details panel (caseDetail) if a case is clicked
+// Sources:
+//      -> refreshApex() best practices https://salesforcegeek.in/refreshapex-in-lwc/
 import { LightningElement, wire, track } from 'lwc';
 
 import CASE_OBJECT from '@salesforce/schema/Case';
@@ -9,30 +11,34 @@ import PRIORITY_FIELD from '@salesforce/schema/Case.Priority';
 
 import { getPicklistValues } from 'lightning/uiObjectInfoApi';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { refreshApex } from '@salesforce/apex';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 import getCases from '@salesforce/apex/Case_Manager.getCases';
 
 export default class CaseConsole extends LightningElement {
   @track cases = [];
+  wiredCasesResult;
   @track statusOptions = [];
   @track priorityOptions = [];
   @track recordTypeOptions = [];
   caseRecordTypeId;
-  @track recordDetailData = [];
+  @track selectedCaseId; // used for displaying data to children based on the selection in the caseList child component
   
   // 1. Get Case data in USER_MODE!
   @wire(getCases)
-  wiredCases({ data, error }) {
-    if(data) { // creates a clickable link for Contacts
-      this.cases = data.map(item => ({
+  wiredCases(result) {
+    this.wiredCasesResult = result;
+    if(result.data) { // creates a clickable link for Contacts
+      this.cases = result.data.map(item => ({
         ...item,
         contactUrl: item.ContactId ? '/' + item.ContactId : null,
         caseUrl: '/' + item.Id
       }));
-      console.log('data received from wire:', data)
+      console.log('data received from wire:', result.data)
     }
-    else if(error) {
-      console.error("Wire error:", error);
+    else if(result.error) {
+      console.error("Wire error:", result.error);
     }
   };
   
@@ -87,13 +93,43 @@ export default class CaseConsole extends LightningElement {
       console.error('Error fetching status picklist values', error);
     }
   }
-
+  
   handleRowAction(event) {
     const actionName = event.detail.action.name;
     const rowData = event.detail.row;
-
+    
     if(actionName === 'view_details') {
-      this.recordDetailData = rowData;
+      this.selectedCaseId = rowData.Id;
     }
+  }
+  
+  // Retrieves data used in caseDetail child components
+  get recordDetailData() {
+    if(!this.selectedCaseId || !this.cases) return null;
+    return this.cases.find(c => c.Id === this.selectedCaseId);
+  }
+  
+  handleRefreshButton() {
+    refreshApex(this.wiredCasesResult)
+    .then(() => {
+      console.log('Data refreshed successfully');
+    })
+    .catch(error => {
+      console.error('Error refreshing data:', error);
+    });
+    console.log('refreshing apex');
+    
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: 'Refreshed Table',
+        message: 'The table has been refreshed',
+        variant: 'success',
+        mode: 'dismissible'
+      })
+    );
+  }
+
+  handleRevokeRecordChange(event) {
+    this.selectedCaseId = event.detail;
   }
 }

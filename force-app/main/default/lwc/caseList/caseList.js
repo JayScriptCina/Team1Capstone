@@ -55,6 +55,7 @@ export default class DynamicDataTable extends LightningElement {
     return this._cases;
   }
   set cases(value) {
+    console.log("setting _cases in caseList.js");
     this._cases = value || [];
     this.initializeData();
   }
@@ -185,11 +186,16 @@ export default class DynamicDataTable extends LightningElement {
       this.updateSlicedData();
     }
   }
+  
   handleNext() {
     const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
     if(this.index < maxIndex) {
       this.index++;
       this.updateSlicedData();
     }
+  }
+
+  handleRefresh() {
+    this.dispatchEvent(new CustomEvent('refreshbutton'));
   }
 }
