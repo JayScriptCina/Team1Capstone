@@ -1,3 +1,6 @@
+// Name: Jay Cina
+// Date: 02/04/2026
+// Desc: A countdown UI based on the date provided
 import { LightningElement, api, track } from 'lwc';
 
 export default class SlaCountdown extends LightningElement {

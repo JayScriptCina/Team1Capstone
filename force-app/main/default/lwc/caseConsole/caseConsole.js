@@ -121,8 +121,8 @@ export default class CaseConsole extends LightningElement {
     
     this.dispatchEvent(
       new ShowToastEvent({
-        title: 'Refreshed Table',
-        message: 'The table has been refreshed',
+        title: 'Refreshed Data',
+        message: 'The data has been refreshed',
         variant: 'success',
         mode: 'dismissible'
       })

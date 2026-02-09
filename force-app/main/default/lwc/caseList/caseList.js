@@ -111,12 +111,11 @@ export default class DynamicDataTable extends LightningElement {
   }
   
   get nextButtonDisabled() {
-    const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
-    return this.index >= maxIndex; // true if we are at the final page
+    return this.index >= this.maxIndex; // true if we are at the final page
   }
 
   get maxIndex() {
-    return Math.floor((this.filteredData.length - 1) / this.increment);
+    return Math.floor((this.filteredData.length) / this.increment);
   }
   
   // Handle Filter Change
@@ -188,8 +187,7 @@ export default class DynamicDataTable extends LightningElement {
   }
   
   handleNext() {
-    const maxIndex = Math.floor((this.filteredData.length - 1) / this.increment);
-    if(this.index < maxIndex) {
+    if(this.index < this.maxIndex) {
       this.index++;
       this.updateSlicedData();
     }

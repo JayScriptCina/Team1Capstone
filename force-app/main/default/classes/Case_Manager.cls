@@ -48,17 +48,6 @@ public with sharing class Case_Manager {
         ];
     }
 
-    public class CaseDTO {
-        @AuraEnabled public Id Id;
-        @AuraEnabled public String CaseNumber;
-        @AuraEnabled public String Status;
-        @AuraEnabled public String Priority;
-        @AuraEnabled public String RecordTypeName;
-        @AuraEnabled public String ContactId;
-        @AuraEnabled public String ContactName;
-        @AuraEnabled public Datetime SLATarget;
-    }
-
     // Returns the Cases the user has access to in SF database
     // Used in caseConsole LWC
     @AuraEnabled(cacheable=true)
