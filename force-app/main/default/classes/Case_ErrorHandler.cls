@@ -19,8 +19,7 @@ public class Case_ErrorHandler {
 
         Case_Activity__c logRec = new Case_Activity__c();
         logRec.Case__c = caseId;
-        // If your Activity_Type__c picklist does not include "Error", delete the next line
-        // logRec.Activity_Type__c = 'Error';
+        logRec.Activity_Type__c = 'Error';
         logRec.Error_Message__c = ex.getMessage();
         logRec.Stack_Trace__c = ex.getStackTraceString();
         logRec.Context__c = context;
