@@ -13,9 +13,15 @@ export default class CaseDetail extends LightningElement {
     return this._recordData;
   }
   set recordData(value) {
+    // When "More Details" is clicked for a different Case, unsaved data shouldn't be lost
     if (this.isDirty) {
       this.showUnsavedDataToast();
       return;
+    }
+
+    // When "More Details" is clicked for a different Case, Edit mode should disable
+    if(this.isEditMode) {
+      this.handleCancel();
     }
 
     if(!value) return;
@@ -36,6 +42,7 @@ export default class CaseDetail extends LightningElement {
   }
 
   handleFieldChange() {
+    console.log('field change identified');
     this.isDirty = true;
   }
   
