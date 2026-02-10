@@ -1,4 +1,4 @@
- public class CaseDTO {
+public class CaseDTO {
   @AuraEnabled public Id Id;
   @AuraEnabled public String CaseNumber;
   @AuraEnabled public String Status;

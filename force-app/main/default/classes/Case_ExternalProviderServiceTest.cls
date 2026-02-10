@@ -30,7 +30,7 @@ private class Case_ExternalProviderServiceTest {
         insert c;
 
         // Set the HTTP callout mock
-        Test.setMock(HttpCalloutMock.class, new ProviderApiMock());
+        Test.setMock(HttpCalloutMock.class, new ProviderDataMock());
 
         Test.startTest();
             // Enqueue the queueable with the case id

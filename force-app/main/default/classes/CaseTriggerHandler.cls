@@ -1,3 +1,8 @@
+// Name: Jay Cina
+// Date: 02/10/26
+// Desc: Enforces data quality: high priority cases must have a description of 30 length
+//        Creates Case_Activity__c logs upon Case creation or field changes (upsert/update)
+
 public class CaseTriggerHandler {
 
     public static void beforeInsert(List<Case> newCases) {
@@ -20,16 +25,40 @@ public class CaseTriggerHandler {
     }
 
     public static void afterInsert(List<Case> newCases) {
-      // for loop through the newCases
-      for (Case c : newCases) {
-        // Create a Case_Activity__c
-        
+      List<Case_Activity__c> casesToInsert = new List<Case_Activity__c>();
 
+      for (Case c : newCases) {
+        // Create a Case_Activity__c where Activity Type = "Intake" 
+        Case_Activity__c logRec = new Case_Activity__c();
+        logRec.Case__c = c.Id;
+        logRec.Activity_Type__c = 'Intake';
+        logRec.Context__c = 'Case created';
+
+        casesToInsert.add(logRec);
       }
 
-      // Create a Case_Activity__c where Activity Type = "Intake" 
+      insert casesToInsert;
+      
     }
+
+
     public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
-      // Create a Case_Activity__c where Activity Type = "Status Changed" 
+      List<Case_Activity__c> casesToInsert = new List<Case_Activity__c>();
+
+      for (Case c : newCases) {
+  
+
+        // Determine which values have changed from the oldMap to newCases
+
+        // Create a Case_Activity__c where Activity Type = "Status Changed" 
+        Case_Activity__c logRec = new Case_Activity__c();
+        logRec.Case__c = c.Id;
+        logRec.Activity_Type__c = 'Status Changed';
+        logRec.Context__c = 'Case values changed';
+
+        casesToInsert.add(logRec);
+      }
+
+      insert casesToInsert;
     }
 }
