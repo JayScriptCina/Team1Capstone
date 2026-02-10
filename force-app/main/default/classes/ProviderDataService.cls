@@ -22,8 +22,7 @@ public with sharing class ProviderDataService {
         req.setEndpoint('callout:' + NC + '/provider_data');
         req.setMethod('GET');
         req.setHeader('Accept', 'application/json');
-        // Explicit timeout (ms)
-        req.setTimeout(20000);
+        req.setTimeout(20000); // Explicit timeout (ms)
 
         Http http = new Http();
         HttpResponse res;

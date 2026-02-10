@@ -13,9 +13,8 @@ public class Case_ErrorHandler {
     }
 
     public static Result handle(Exception ex, Id caseId, String context) {
-        String correlationId = String.valueOf(DateTime.now().getTime());
         String userMessage =
-            'An error occurred while processing this Case. Reference: ' + correlationId;
+            'An error occurred while processing this Case. Reference: ' + caseId;
 
         Case_Activity__c logRec = new Case_Activity__c();
         logRec.Case__c = caseId;
@@ -23,7 +22,6 @@ public class Case_ErrorHandler {
         logRec.Error_Message__c = ex.getMessage();
         logRec.Stack_Trace__c = ex.getStackTraceString();
         logRec.Context__c = context;
-        logRec.Correlation_Id__c = correlationId;
 
         try {
             insert logRec;
