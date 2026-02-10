@@ -14,7 +14,7 @@ import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
-import getCases from '@salesforce/apex/Case_Manager.getCases';
+import getCases from '@salesforce/apex/CaseController.getCases';
 
 export default class CaseConsole extends LightningElement {
   @track cases = [];

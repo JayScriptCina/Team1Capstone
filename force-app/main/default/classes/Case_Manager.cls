@@ -1,78 +1,63 @@
+// Name: Jay Cina
+// Date: 02/10/26
+// Desc: Logic for case creation and insertion
+
 public with sharing class Case_Manager {
 
-    // After-save orchestration entrypoint
-    public static void processAfterSave(List<Case> newCases, Map<Id, Case> oldMap, String contextKey) {
-        Set<Id> toCallout = new Set<Id>();
+    public static void beforeInsert(List<Case> newCases) {
+        enforceRule(newCases);
+    }
 
-        for (Case c : newCases) {
-            if (c.Id == null) continue;
+    public static void beforeUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
+        enforceRule(newCases);
+    }
 
-            // Idempotent guard
-            if (TriggerExecutionGuard.alreadyProcessed(c.Id, contextKey)) continue;
+    private static void enforceRule(List<Case> casesToCheck) {
+        for (Case c : casesToCheck) {
+            Boolean isHigh = (c.Priority == 'High');
+            Integer len = (c.Description == null) ? 0 : c.Description.trim().length();
 
-            Boolean shouldCall = false;
-
-            if (oldMap == null) {
-                // After insert
-                shouldCall = true;
-            } else if (oldMap.containsKey(c.Id)) {
-                // After update example condition: Priority changed
-                Case oldC = oldMap.get(c.Id);
-                if (c.Priority != oldC.Priority) {
-                    shouldCall = true;
-                }
+            if (isHigh && len < 30) {
+                c.addError('If Priority is High, Description must be at least 30 characters.');
             }
-
-            if (shouldCall) toCallout.add(c.Id);
-
-            // Flow orchestration hook (optional):
-            // If you have an autolaunched Flow you want to run here, tell me the Flow API name.
-        }
-
-        if (!toCallout.isEmpty()) {
-            System.enqueueJob(new Case_ExternalProviderService(toCallout));
         }
     }
 
-    /* LWC data-retrieval functions below - Jay Cina */
+    public static void afterInsert(List<Case> newCases) {
+      List<Case_Activity__c> casesToInsert = new List<Case_Activity__c>();
 
-    // Returns the Case Providers the user has access to in SF database
-    // used in providerInteraction LWC
-    @AuraEnabled(cacheable=true)
-    public static List<Case_Provider__c> getCaseProviders() {
-        return [
-            SELECT Id, Provider_Name__c, Phone_Number__c, Rating__c, Service_Category__c, Specialty__c
-            FROM Case_Provider__c
-            WITH USER_MODE
-            ORDER BY Rating__c
-        ];
+      for (Case c : newCases) {
+        // Create a Case_Activity__c where Activity Type = "Intake" 
+        Case_Activity__c logRec = new Case_Activity__c();
+        logRec.Case__c = c.Id;
+        logRec.Activity_Type__c = 'Intake';
+        logRec.Context__c = 'Case created';
+
+        casesToInsert.add(logRec);
+      }
+
+      insert casesToInsert;
+      
     }
 
-    // Returns the Cases the user has access to in SF database
-    // Used in caseConsole LWC
-    @AuraEnabled(cacheable=true)
-    public static List<CaseDTO> getCases() {
-        List<CaseDTO> results = new List<CaseDTO>();
-        for (Case c : [
-            SELECT Id, CaseNumber, RecordType.Name, OwnerId, Description, Priority, SLA_Target__c, SLAViolation__c, Status, Subject, Triage_Category__c,
-            Case_Provider__c,
-            AccountId, ContactId, ContactPhone, Contact.Name
-            FROM Case
-            //WITH USER_MODE
-        ]) {
-            CaseDTO dto = new CaseDTO();
-            dto.Id = c.Id;
-            dto.CaseNumber = c.CaseNumber;
-            dto.Status = c.Status;
-            dto.Priority = c.Priority;
-            dto.RecordTypeName = c.RecordType.Name != null ? c.RecordType.Name : null;
-            dto.ContactId = c.ContactId != null ? c.ContactId : null;
-            dto.ContactName = c.Contact != null ? c.Contact.Name : null;
-            dto.SLATarget = c.SLA_Target__c != null ? c.SLA_Target__c : null;
 
-            results.add(dto);
-            }
+    public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
+      List<Case_Activity__c> casesToInsert = new List<Case_Activity__c>();
 
-        return results;
+      for (Case c : newCases) {
+  
+
+        // Determine which values have changed from the oldMap to newCases
+
+        // Create a Case_Activity__c where Activity Type = "Status Changed" 
+        Case_Activity__c logRec = new Case_Activity__c();
+        logRec.Case__c = c.Id;
+        logRec.Activity_Type__c = 'Status Changed';
+        logRec.Context__c = 'Case values changed';
+
+        casesToInsert.add(logRec);
+      }
+
+      insert casesToInsert;
     }
 }
