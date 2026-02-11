@@ -1,5 +1,5 @@
 @isTest
-public class TestCaseTrigger {
+public class CaseTriggerHandlerTest {
   
   // Utility method to create a valid Case
   private static Case buildCase(String priority, String descr) {
@@ -191,4 +191,9 @@ public class TestCaseTrigger {
     System.assertEquals(100, logCount, 'Each case should create one log');
   }
   
+  // USER TEST
+
+  // Run as Agent
+
+  // Run as Supervisor
 }

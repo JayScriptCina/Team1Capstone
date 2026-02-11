@@ -1,4 +1,6 @@
 /* LWC data-retrieval functions below - Jay Cina */
+// Separate functions into CaseConsoleController and ProviderInteractionController
+// Tests for each class based on User types (visibility is proper)
 
 public with sharing class CaseController {
   
