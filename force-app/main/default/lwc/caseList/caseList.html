@@ -2,8 +2,18 @@
   <lightning-card title="Case Console" icon-name="standard:case">
     <div class="slds-grid slds-wrap slds-p-horizontal_medium slds-p-bottom_x-small">
       
+      <!-- Case Number Filter -->
+      <div class="slds-col slds-size_1-of-6">
+        <lightning-input 
+        type="text" 
+        label="Case Number"
+        onchange={handleFilterChange}
+        data-filter="caseNumber"
+        ></lightning-input>
+      </div>
+
       <!-- Status Filter -->
-      <div class="slds-col slds-size_1-of-5">
+      <div class="slds-col slds-size_1-of-6">
         <lightning-combobox
         label="Status" 
         value={filters.status}
@@ -14,7 +24,7 @@
       </div>
       
       <!-- Priority Filter -->
-      <div class="slds-col slds-size_1-of-5">
+      <div class="slds-col slds-size_1-of-6">
         <lightning-combobox
         label="Priority"
         value={filters.priority}
@@ -25,7 +35,7 @@
       </div>
       
       <!-- Record Type Filter -->
-      <div class="slds-col slds-size_1-of-5">
+      <div class="slds-col slds-size_1-of-6">
         <lightning-combobox
         label="RecordType"
         options={recordTypeOptionsArr}
@@ -35,7 +45,7 @@
       </div>
       
       <!-- Contact Filter -->
-      <div class="slds-col slds-size_1-of-5">
+      <div class="slds-col slds-size_1-of-6">
         <lightning-input 
         type="text" 
         label="Contact"
@@ -44,9 +54,8 @@
         ></lightning-input>
       </div>
       
-      
       <!-- Reset Button -->
-      <div class="slds-col slds-size_1-of-5 slds-m-top_large">
+      <div class="slds-col slds-size_1-of-6 slds-m-top_large">
         <lightning-button 
         label="Reset Filters" 
         variant="neutral" 

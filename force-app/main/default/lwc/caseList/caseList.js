@@ -15,7 +15,7 @@ export default class DynamicDataTable extends LightningElement {
   @track tableData = [];
   @track filteredData = [];
   @track slicedData = [];
-  @track filters = { status: '', priority: '', recordType: '', contact: '' };
+  @track filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '' };
   @track filteredDataCount;
   
   // Variables for datatable pagination
@@ -142,12 +142,14 @@ export default class DynamicDataTable extends LightningElement {
     try {
       this.filteredData = this.tableData.filter(item => {
         // console.log('item is:', item);
+        const caseNumber = (item.CaseNumber || '');
         const status = (item.Status || '');
         const priority = (item.Priority || '');
         const recordType = (item.RecordTypeName || '');
         const contact = (item.ContactName || '');
         // console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
         return (
+          (this.filters.caseNumber ? caseNumber.includes(this.filters.caseNumber) : true) &&
           (
             !this.filters.status
             ? true : this.filters.status === 'Not Closed'
@@ -168,7 +170,7 @@ export default class DynamicDataTable extends LightningElement {
   
   // Reset Filters
   resetFilters() {
-    this.filters = { status: '', priority: '', recordType: '', contact: '' };
+    this.filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '' };
     this.filteredData = [...this.tableData];
     this.updateSlicedData();
     this.index = 0;
