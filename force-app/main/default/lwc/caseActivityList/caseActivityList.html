@@ -1,0 +1,49 @@
+<template>
+<lightning-card title={cardTitle} icon-name="standard:file">
+    
+    <div class="slds-m-horizontal_medium slds-p-bottom_x-small slds-grid">
+      <!-- Prev Button -->
+      <lightning-button 
+      label="Previous" 
+      variant="neutral" 
+      class="slds-m-right_x-small"
+      disabled={prevButtonDisabled}
+      onclick={handlePrevious}
+      ></lightning-button>
+      
+      <!-- Next Button -->
+      <lightning-button 
+      label="Next" 
+      variant="neutral" 
+      disabled={nextButtonDisabled}
+      onclick={handleNext}
+      ></lightning-button>
+
+      <div class="slds-text-color_weak slds-m-horizontal_small slds-align_absolute-center">
+        Page {index} of {maxIndex}
+      </div>
+
+      <!-- Refresh Button -->
+      <lightning-button
+      label="Refresh"
+      variant="neutral"
+      onclick={handleRefresh}
+      ></lightning-button>
+    </div>
+    
+    <!-- DataTable -->
+    <lightning-datatable 
+    key-field="id"
+    data={slicedData}
+    columns={columns}
+    hide-checkbox-column="true"
+    row-number-offset={rowOffset}
+    onrowaction={handleRowAction}
+    ></lightning-datatable>
+
+    <!-- No Records Message -->
+    <template if:false={hasData}>
+      <p style="text-align:center; padding:20px;">There are currently no records to show.</p>
+    </template>
+  </lightning-card>
+</template>

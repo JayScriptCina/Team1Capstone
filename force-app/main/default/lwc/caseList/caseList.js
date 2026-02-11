@@ -4,7 +4,7 @@
 // Dynamic Data Table base code credit: https://medium.com/@gadige.sfdc/lwc-data-table-with-dynamic-filters-28387a11cab4
 import { LightningElement, api, track } from 'lwc';
 
-export default class DynamicDataTable extends LightningElement {
+export default class CaseList extends LightningElement {
   // Data from caseConsole LWC
   _cases = [];
   @api priorityOptions = [];
