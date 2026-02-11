@@ -4,7 +4,7 @@ import PHONE_NUMBER_FIELD from '@salesforce/schema/Case_Provider__c.Phone_Number
 import RATING_FIELD from '@salesforce/schema/Case_Provider__c.Rating__c';
 import SERVICE_CATEGORY_FIELD from '@salesforce/schema/Case_Provider__c.Service_Category__c';
 import SPECIALTY_FIELD from '@salesforce/schema/Case_Provider__c.Specialty__c';
-import getCaseProviders from '@salesforce/apex/CaseController.getCaseProviders';
+import getCaseProviders from '@salesforce/apex/ProviderInteractionController.getCaseProviders';
 const COLUMNS = [
   { label: 'Rating', fieldName: RATING_FIELD.fieldApiName, type: 'text'},
   { label: 'Provider Name', fieldName: NAME_FIELD.fieldApiName, type: 'text' },

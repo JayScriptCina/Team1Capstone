@@ -1,23 +1,10 @@
-/* LWC data-retrieval functions below - Jay Cina */
-// Separate functions into CaseConsoleController and ProviderInteractionController
-// Tests for each class based on User types (visibility is proper)
+// Name: Jay Cina
+// Date: 02/05/26
+// Desc: LWC data-retrieval functions for the caseConsole LWC
 
-public with sharing class CaseController {
-  
-  // Returns the Case Providers the user has access to in SF database
-  // used in providerInteraction LWC
-  @AuraEnabled(cacheable=true)
-  public static List<Case_Provider__c> getCaseProviders() {
-    return [
-    SELECT Id, Provider_Name__c, Phone_Number__c, Rating__c, Service_Category__c, Specialty__c
-    FROM Case_Provider__c
-    WITH USER_MODE
-    ORDER BY Rating__c
-    ];
-  }
+public with sharing class CaseConsoleController {
   
   // Returns the Cases the user has access to in SF database
-  // Used in caseConsole LWC
   @AuraEnabled(cacheable=true)
   public static List<CaseDTO> getCases() {
     List<CaseDTO> results = new List<CaseDTO>();
