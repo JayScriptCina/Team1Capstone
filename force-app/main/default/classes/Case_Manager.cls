@@ -25,19 +25,7 @@ public with sharing class Case_Manager {
   }
   
   public static void afterInsert(List<Case> newCases) {
-
-    List<Case_Activity__c> logs = new List<Case_Activity__c>();
-    
-    for (Case c : newCases) {
-      // Create a Case_Activity__c where Activity Type = "Intake" 
-      Case_Activity__c logRec = new Case_Activity__c();
-      logRec.Case__c = c.Id;
-      logRec.Activity_Type__c = 'Intake';
-      logRec.Context__c = 'Case created';
-      logs.add(logRec);
-    }
-    
-    insert logs;
+    // A Record Triggered flow should create an Intake Activity!
   }
   
   public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
@@ -47,11 +35,12 @@ public with sharing class Case_Manager {
     List<String> fieldsToTrack = new List<String>{
       'Status', 'Priority', 'Subject', 'Description'
     };
+
+    List<String> changes = new List<String>();
     
     for (Case c : newCases) {
       // Store values that have changed
       Case oldC = oldMap.get(c.Id);
-      List<String> changes = new List<String>();
       
       // Loop thru the fields we track and compare
       for (String fieldName : fieldsToTrack) {
@@ -67,7 +56,7 @@ public with sharing class Case_Manager {
       if (!changes.isEmpty()) {
         Case_Activity__c logRec = new Case_Activity__c();
         logRec.Case__c = c.Id;
-        logRec.Activity_Type__c = 'Status Changed';
+        logRec.Activity_Type__c = 'Status Change';
         logRec.Context__c = String.join(changes, ' | ');
         logs.add(logRec);
       }

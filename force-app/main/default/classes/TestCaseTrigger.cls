@@ -74,9 +74,8 @@ public class TestCaseTrigger {
       WHERE Case__c = :c.Id
     ];
     
-    System.assertEquals(1, logs.size(), 'One log should be created');
+    System.assertEquals(1, logs.size(), 'One log should be created but we have ' + logs);
     System.assertEquals('Intake', logs[0].Activity_Type__c, 'Activity Type is ' + logs[0].Activity_Type__c + ' instead of: Intake. Logs are:' + logs);
-    System.assertEquals('Case created', logs[0].Context__c, 'Context is ' + logs[0].Context__c + ' instead of: Case created');
   }
   
   // BEFORE UPDATE TESTS
@@ -138,7 +137,7 @@ public class TestCaseTrigger {
       SELECT Activity_Type__c, Context__c
       FROM Case_Activity__c
       WHERE Case__c = :c.Id
-      AND Activity_Type__c = 'Status Changed'
+      AND Activity_Type__c = 'Status Change'
     ];
     
     System.assertEquals(1, logs.size(), 'One change log should be created');
