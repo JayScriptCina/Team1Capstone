@@ -158,7 +158,7 @@ export default class CaseList extends LightningElement {
           ) &&
           (this.filters.priority ? priority === this.filters.priority : true) &&
           (this.filters.recordType ? recordType === this.filters.recordType : true) &&
-          (this.filters.contact ? contact.includes(this.filters.contact) : true)
+          (this.filters.contact ? contact.toLowerCase().includes(this.filters.contact.toLowerCase()) : true)
         );
       });
       

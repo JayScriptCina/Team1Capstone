@@ -18,12 +18,20 @@ export default class CaseActivityList extends LightningElement {
   
   // Columns Definition
   columns = [
-    { label: 'Case Number', fieldName: 'CaseNumber', type: 'text'},
-    { label: 'Created Date', fieldName: 'CreatedDate', type: 'datetime' },
+    { label: 'Case#', fieldName: 'CaseNumber', type: 'text'},
+    { label: 'Date', fieldName: 'CreatedDateFormatted', type: 'text', wrapText: true },
     { label: 'Type', fieldName: 'Activity_Type__c', type: 'text' },
     { label: 'Context', fieldName: 'Context__c', type: 'text' },
     { label: 'Error Message', fieldName: 'Error_Message__c', type: 'text' },
-    { label: 'Stack Trace', fieldName: 'Stack_Trace__c', type: 'text' }
+    { label: 'Stack Trace', fieldName: 'Stack_Trace__c', type: 'text' },
+    {
+      type: 'button',
+      typeAttributes: {
+        label: 'More Details →',
+        name: 'view_details',
+        variant: 'base'
+      }
+    }
   ];
   
   @api
@@ -96,7 +104,6 @@ export default class CaseActivityList extends LightningElement {
   
   updateSlicedData() {
     this.slicedData = this.filteredData.slice(this.index * this.increment, (this.index + 1) * this.increment);
-    console.log('slicedData', this.slicedData);
   }
 
   // Apply Filters to Data
@@ -107,19 +114,20 @@ export default class CaseActivityList extends LightningElement {
       this.filteredData = this.tableData.filter(item => {
         // console.log('item is:', item);
         const caseNumber = (item.CaseNumber || '');
-        const createdDate = (item.CreatedDate || '');
+        const createdDate = (item.CreatedDateFormatted || '');
         const activityType = (item.Activity_Type__c || '');
         const context = (item.Context__c || '');
         const errorMessage = (item.Error_Message__c || '');
         const stackTrace = (item.Stack_Trace__c || '');
-        console.log( 'caseNumber:', caseNumber, 'createdDate', createdDate, 'activityType', activityType, '... more');
+        // console.log( 'caseNumber:', caseNumber, 'createdDate', createdDate, 'activityType', activityType, '... more');
         return (
           (this.filters.caseNumber ? caseNumber.includes(this.filters.caseNumber) : true) &&
-          (this.filters.createdDate ? caseNumber.includes(this.filters.createdDate) : true) &&
+          (this.filters.createdDate ? createdDate.toLowerCase().includes(this.filters.createdDate.toLowerCase()) : true) &&
           (this.filters.activityType ? activityType === this.filters.activityType : true) &&
-          (this.filters.context ? context.includes(this.filters.context) : true) &&
-          (this.filters.errorMessage ? errorMessage.includes(this.filters.errorMessage) : true) &&
-          (this.filters.stackTrace ? stackTrace.includes(this.filters.stackTrace) : true)        );
+          (this.filters.context ? context.toLowerCase().includes(this.filters.context.toLowerCase()) : true) &&
+          (this.filters.errorMessage ? errorMessage.toLowerCase().includes(this.filters.errorMessage.toLowerCase()) : true) &&
+          (this.filters.stackTrace ? stackTrace.toLowerCase().includes(this.filters.stackTrace.toLowerCase()) : true)
+        );
       });
       
       this.updateSlicedData();

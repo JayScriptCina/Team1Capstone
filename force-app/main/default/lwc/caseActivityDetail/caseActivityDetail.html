@@ -1,3 +1,50 @@
 <template>
-    
+  <!-- Record Detail Panel -->
+  <lightning-card title="Record Detail" icon-name="standard:record">
+    <div class="slds-p-horizontal_small">
+      <lightning-record-edit-form
+      record-id={recordId}
+      object-api-name='Case_Activity__c'>
+      <template if:true={recordId}>
+        <div class="slds-box slds-theme_default">
+          
+          <!-- Row 1  -->
+          <div class="slds-scrollable_y">
+            <lightning-output-field field-name="CaseNumber"></lightning-output-field>
+          </div>
+          
+          <!-- Row 2  -->
+          <div class= 'slds-grid slds-wrap'>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="CreatedDate"></lightning-output-field>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-output-field field-name="CreatedById"></lightning-output-field>
+            </div>
+          </div>
+          
+          <!-- Row 2  -->
+          <lightning-output-field field-name="Activity_Type__c"></lightning-output-field>
+          
+          <!-- Row 3  -->
+          <lightning-output-field field-name="Context__c"></lightning-output-field>
+          
+          <!-- Row 4  -->
+          <lightning-output-field field-name="Description__c"></lightning-output-field>
+          
+          <!-- Row 5  -->
+          <!-- <div class="slds-scrollable_y" style="height:5rem;width:24rem" tabindex="0">
+            <lightning-output-field field-name="Error_Message__c"></lightning-output-field>
+          </div> -->
+          <lightning-output-field field-name="Error_Message__c"></lightning-output-field>
+          
+          <!-- Row 6  -->
+          <lightning-output-field field-name="Stack_Trace__c"></lightning-output-field>
+          
+          
+        </div>
+      </template>
+    </lightning-record-edit-form>
+  </div>
+</lightning-card>
 </template>

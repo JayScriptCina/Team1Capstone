@@ -27,7 +27,8 @@ export default class CaseTimeline extends LightningElement {
     if(result.data) { // creates a clickable link for Case
         this.activities = result.data.map(item => ({
           ...item,
-          CaseNumber: item.Case__r?.CaseNumber
+          CaseNumber: item.Case__r?.CaseNumber,
+          CreatedDateFormatted: new Date(item.CreatedDate).toLocaleString()
         }));
         console.log('data received from wire:', result.data);
       }
