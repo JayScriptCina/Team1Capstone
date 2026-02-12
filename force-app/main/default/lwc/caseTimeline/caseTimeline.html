@@ -1,17 +1,5 @@
 <template>
-  <div>
-    <c-case-list
-    cases={cases}
-    status-options={statusOptions}
-    priority-options={priorityOptions}
-    record-type-options={recordTypeOptions}
-    onhandlerowaction={handleRowAction}
-    onrefreshbutton={handleRefreshButton}
-    >
-  </c-case-list>
-</div>
-
-
+  
 <div class="wrapper">
   <section class="content">
     <div class="columns">
@@ -20,6 +8,7 @@
       <main class="main">
         <c-case-activity-list
         activities={activities}
+        activity-type-options={activityTypeOptions}
         onhandlerowaction={handleRowAction}
         onrefreshbutton={handleRefreshButton}
         >
@@ -27,13 +16,13 @@
     </main>
     
     <!-- Sidebar Detail Column -->
-    <aside class="sidebar-second">
+    <!-- <aside class="sidebar-second">
       <c-case-activity-detail
       class="slds-show"
       record-data={recordDetailData}
       ></c-case-activity-detail>
     </aside>
-    
+     -->
   </div>
 </section>
 </div>

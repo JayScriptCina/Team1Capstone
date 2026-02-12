@@ -3,11 +3,13 @@ import { LightningElement, api, track } from 'lwc';
 export default class CaseActivityList extends LightningElement {
   // Data from caseTimeline LWC
   _activities = [];
+  @api activityTypeOptions = [];
   
   // Updateable data
   @track tableData = [];
+  @track filteredData = [];
   @track slicedData = [];
-  @track slicedData = [];
+  @track filters = { caseNumber: '', createdDate: '', activityType: '', context: '', errorMessage: '', stackTrace: '' };
   @track filteredDataCount;
   
   // Variables for datatable pagination
@@ -16,6 +18,8 @@ export default class CaseActivityList extends LightningElement {
   
   // Columns Definition
   columns = [
+    { label: 'Case Number', fieldName: 'CaseNumber', type: 'text'},
+    { label: 'Created Date', fieldName: 'CreatedDate', type: 'datetime' },
     { label: 'Type', fieldName: 'Activity_Type__c', type: 'text' },
     { label: 'Context', fieldName: 'Context__c', type: 'text' },
     { label: 'Error Message', fieldName: 'Error_Message__c', type: 'text' },
@@ -37,15 +41,13 @@ export default class CaseActivityList extends LightningElement {
     this.filteredData = [...this.tableData];
     console.log('filtered data:', this.filteredData);
     
+    this.applyFilters();
+
     this.filteredDataCount = this.filteredData.length;
   }
 
   get hasData() {
     return this.filteredData && this.filteredData.length > 0;
-  }
-
-  get cardTitle() {
-    return "Case Activities for " + this.filteredData[0].caseId;
   }
   
   // Used for pagination of the lwc datatable
@@ -56,7 +58,20 @@ export default class CaseActivityList extends LightningElement {
   get prevButtonDisabled() {
     return this.index === 0; // true if we are at page 1
   }
+
+  get activityTypeOptionsArr() {
+    return this.activityTypeOptions;
+  }
   
+  get resetButtonDisabled() {
+    if(Object.values(this.filters).every(value => value === '')) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
   get nextButtonDisabled() {
     return this.index >= this.maxIndex; // true if we are at the final page
   }
@@ -65,12 +80,66 @@ export default class CaseActivityList extends LightningElement {
     return Math.floor((this.filteredData.length) / this.increment);
   }
   
+  // Handle Filter Change
+  handleFilterChange(event) {
+    const filterType = event.target.dataset.filter;
+    const filterValue = event.target.value;
+    console.log('value selected was', event.target.value);
+    
+    this.filters = { ...this.filters, [filterType]: filterValue };
+    this.applyFilters();
+  }
+
   handleRowAction(event) {
     this.dispatchEvent(new CustomEvent('handlerowaction', event));
   }
   
   updateSlicedData() {
     this.slicedData = this.filteredData.slice(this.index * this.increment, (this.index + 1) * this.increment);
+    console.log('slicedData', this.slicedData);
+  }
+
+  // Apply Filters to Data
+  applyFilters() {
+    this.index = 0;
+    
+    try {
+      this.filteredData = this.tableData.filter(item => {
+        // console.log('item is:', item);
+        const caseNumber = (item.CaseNumber || '');
+        const createdDate = (item.CreatedDate || '');
+        const activityType = (item.Activity_Type__c || '');
+        const context = (item.Context__c || '');
+        const errorMessage = (item.Error_Message__c || '');
+        const stackTrace = (item.Stack_Trace__c || '');
+        console.log( 'caseNumber:', caseNumber, 'createdDate', createdDate, 'activityType', activityType, '... more');
+        return (
+          (this.filters.caseNumber ? caseNumber.includes(this.filters.caseNumber) : true) &&
+          (this.filters.createdDate ? caseNumber.includes(this.filters.createdDate) : true) &&
+          (this.filters.activityType ? activityType === this.filters.activityType : true) &&
+          (this.filters.context ? context.includes(this.filters.context) : true) &&
+          (this.filters.errorMessage ? errorMessage.includes(this.filters.errorMessage) : true) &&
+          (this.filters.stackTrace ? stackTrace.includes(this.filters.stackTrace) : true)        );
+      });
+      
+      this.updateSlicedData();
+    }
+    catch (error) {
+      console.error('error applyFilters()', error);
+    }
+  }
+  
+  // Reset Filters
+  resetFilters() {
+    this.filters = { caseNumber: '', createdDate: '', activityType: '', context: '', errorMessage: '', stackTrace: '' };
+    this.filteredData = [...this.tableData];
+    this.updateSlicedData();
+    this.index = 0;
+    
+    // Reset UI Inputs
+    this.template.querySelectorAll('lightning-input, lightning-combobox').forEach(input => {
+      input.value = '';
+    });
   }
   
   handlePrevious() { 

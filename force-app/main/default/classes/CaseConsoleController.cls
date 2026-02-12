@@ -13,7 +13,7 @@ public with sharing class CaseConsoleController {
     Case_Provider__c,
     AccountId, ContactId, ContactPhone, Contact.Name
     FROM Case
-    //WITH USER_MODE
+    WITH USER_MODE
     ]) {
       CaseDTO dto = new CaseDTO();
       dto.Id = c.Id;

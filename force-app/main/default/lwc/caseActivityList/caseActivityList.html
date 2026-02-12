@@ -1,6 +1,79 @@
 <template>
-<lightning-card title={cardTitle} icon-name="standard:file">
-    
+<lightning-card title='Case Activites' icon-name="standard:file">
+    <div class="slds-grid slds-wrap slds-p-horizontal_medium slds-p-bottom_x-small">
+      
+      <!-- Case Number Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-input 
+        type="text" 
+        label="Case Number"
+        onchange={handleFilterChange}
+        data-filter="caseNumber"
+        ></lightning-input>
+      </div>
+
+      <!-- Created Date Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-input
+        type="text"
+        label="Created Date"
+        onchange={handleFilterChange}
+        data-filter="createdDate"
+        ></lightning-input>
+      </div>
+      
+      <!-- Activity Type Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-combobox
+        label="Type"
+        options={activityTypeOptionsArr}
+        onchange={handleFilterChange}
+        data-filter="activityType"
+        ></lightning-combobox>
+      </div>
+      
+      <!-- Context Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-input
+        type="text"
+        label="Context"
+        onchange={handleFilterChange}
+        data-filter="context"
+        ></lightning-input>
+      </div>
+      
+      <!-- Error Message Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-input 
+        type="text" 
+        label="Error Message"
+        onchange={handleFilterChange}
+        data-filter="errorMessage"
+        ></lightning-input>
+      </div>
+
+      <!-- Error Message Filter -->
+      <div class="slds-col slds-size_1-of-7">
+        <lightning-input 
+        type="text" 
+        label="Stack Trace"
+        onchange={handleFilterChange}
+        data-filter="stackTrace"
+        ></lightning-input>
+      </div>
+      
+      <!-- Reset Button -->
+      <div class="slds-col slds-size_1-of-7 slds-m-top_large">
+        <lightning-button 
+        label="Reset Filters" 
+        variant="neutral" 
+        disabled={resetButtonDisabled}
+        class="slds-m-horizontal_x-small"
+        onclick={resetFilters}
+        ></lightning-button>
+      </div>
+    </div>
+
     <div class="slds-m-horizontal_medium slds-p-bottom_x-small slds-grid">
       <!-- Prev Button -->
       <lightning-button 

@@ -135,6 +135,7 @@ export default class CaseList extends LightningElement {
   updateSlicedData() {
     this.slicedData = this.filteredData.slice(this.index * this.increment, (this.index + 1) * this.increment);
   }
+  
   // Apply Filters to Data
   applyFilters() {
     this.index = 0;
