@@ -8,9 +8,7 @@ export default class CaseDetail extends LightningElement {
   @track isSaving = false;
   @track isDirty = false;
   @track saveButtonLabel = "Save";
-  
-  demoResult = 'unset'; // for testing
-  
+    
   @api
   get recordData() {
     return this._recordData;
@@ -84,19 +82,13 @@ export default class CaseDetail extends LightningElement {
   }
   
   async handleFindProviders() {
-    // 
+    // Call the provider modal class
     const result = await ProvidersModal.open({
       caseId: this._recordData.Id
     });
+
     if (result.status === 'success') {
-      this.demoResult = 'success';
-      // handle refresh logic
-    } else if (result.status === 'error'){
-      this.demoResult = 'error';
-      // handle error toast logic
-    }
-    else {
-      this.demoResult = result.status;
+      this.handleRefresh();
     }
   }
   

@@ -56,46 +56,42 @@ export default class ProvidersModal extends LightningModal {
   
   async handleSelect() {
     const providerIds = this.selectedProviders.map(p => p.Id);
-    
+    const toast = this.template.querySelector('c-toast-message');
     // Call Apex
     try {
       const result = await setProviders({
         caseId: this.caseId,
         providerIds: providerIds
       });
-
+      
+      console.log('received result:', result);
+      
       if (result.success) {
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Success',
-            message: result.message,
-            variant: 'success',
-          })
-          // refresh console(s)
-        );
-        this.close('success');
+        toast.showToast({
+          title : 'Success',
+          message : result.message,
+          variant : 'success'
+        });
+
+        // refresh console(s)
+        this.close({ status: 'success' });
+        
       } else { // result is false
-        this.dispatchEvent(
-          new ShowToastEvent({
-            title: 'Error',
-            message: result.message,
-            variant: 'error'
-          })
-        );
+        toast.showToast({
+          title: 'Error',
+          message: result.message,
+          variant: 'error'
+        });
       }
+      
     } catch (error) {
       console.log('Error in apex:', error);
-    //   this.dispatchEvent(
-    //     new ShowToastEvent({
-    //       title: 'Error',
-    //       message: error.body?.message || 'Unknown error occurred',
-    //       variant: 'error'
-    //     })
-    //   );
+      new toast.showToast({
+        title: 'Error',
+        message: error.body?.message || 'Unknown error occurred',
+        variant: 'error'
+      });
     }
-    
-    // return the provider object
-    //this.close({ status: 'success', providerId: this.providerSelected });
   }
   
   handleCancel() {
