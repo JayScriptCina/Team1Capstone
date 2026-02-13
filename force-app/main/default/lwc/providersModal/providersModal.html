@@ -1,0 +1,27 @@
+<template>
+  <lightning-modal-header label="Select a Provider"></lightning-modal-header>
+  <lightning-modal-body>
+    
+    <!-- DataTable -->
+    <lightning-datatable 
+    key-field="id"
+    data={sortedProviders}
+    columns={columns}
+    ></lightning-datatable>
+    
+    <!-- No Records Message -->
+    <template if:false={hasData}>
+      <p style="text-align:center; padding:20px;">There are currently no records to show.</p>
+    </template>
+    
+    <lightning-button
+    variant="brand"
+    type="submit"
+    label="Select"
+    onclick={handleSelect}
+    disabled={isSelectDisabled}>
+  </lightning-button>
+  <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+  
+</lightning-modal-body>
+</template>

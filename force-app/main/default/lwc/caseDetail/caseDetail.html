@@ -77,6 +77,10 @@
 
           <!-- Row 8  -->
           <lightning-output-field field-name="Case_Provider__c"></lightning-output-field>
+          
+          <!-- Find Providers Button -->
+          <lightning-button label="Find Providers" onclick={handleFindProviders}></lightning-button>
+          <p>Result: <code>{demoResult}</code></p>
         </div>
       </template>
       
@@ -133,6 +137,9 @@
 
           <!-- Row 8  -->
           <lightning-input-field field-name="Case_Provider__c" onchange={handleFieldChange}></lightning-input-field>
+          
+          <!-- Find Providers Button -->
+          <lightning-button label="Find Providers" onclick={handleFindProviders}></lightning-button>
           
           <!-- Save and Cancel Buttons  -->
           <div class="slds-var-m-top_medium">

@@ -1,5 +1,6 @@
 import { LightningElement, api, track } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import ProvidersModal from 'c/providersModal';
 
 export default class CaseDetail extends LightningElement {
   _recordData;
@@ -7,6 +8,8 @@ export default class CaseDetail extends LightningElement {
   @track isSaving = false;
   @track isDirty = false;
   @track saveButtonLabel = "Save";
+  
+  demoResult = 'unset'; // for testing
   
   @api
   get recordData() {
@@ -18,36 +21,36 @@ export default class CaseDetail extends LightningElement {
       if(value != this._recordData) { // if the incoming value matches, this means it has been already revoked and should not be called again
         dispatchEvent(CustomEvent('revokerecordchange', {
           detail: this._recordData.Id
-      }));
+        }));
         this.showUnsavedDataToast();
       }
       return;
     }
-
+    
     // When "More Details" is clicked for a different Case, Edit mode should disable
     if(this.isEditMode) {
       this.handleCancel();
     }
-
+    
     if(!value) return;
-
+    
     this._recordData = value;
     console.log('_recordData in caseDetail.js has been updated');
   }
-
+  
   get recordId() {
     console.log("recordData from get recordId:", this.recordData);
     return this._recordData?.Id;
   }
-
+  
   get SLATargetDate() {
     return this._recordData?.SLATarget || null;
   }
-
+  
   get isSaveDisabled() {
     return !this.isDirty || this.isSaving;
   }
-
+  
   handleFieldChange() {
     console.log('field change identified');
     this.isDirty = true;
@@ -61,7 +64,7 @@ export default class CaseDetail extends LightningElement {
     this.isDirty = false;
     this.isEditMode = false;
   }
-
+  
   handleSave() {
     this.saveButtonLabel = 'Saving...';
     this.isSaving = true;
@@ -75,11 +78,22 @@ export default class CaseDetail extends LightningElement {
     this.showSavedDataToast();
     this.handleRefresh();
   }
-
+  
   handleRefresh() {
     this.dispatchEvent(new CustomEvent('refreshbutton'));
   }
-
+  
+  async handleFindProviders() {
+    const result = await ProvidersModal.open({
+      caseId: this._recordData.Id
+    });
+    if (result === null) {
+      this.demoResult = 'dismiss';
+    } else {
+      this.demoResult = result;
+    }
+  }
+  
   showUnsavedDataToast() {
     this.dispatchEvent(
       new ShowToastEvent({
