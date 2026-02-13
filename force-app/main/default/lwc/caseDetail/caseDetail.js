@@ -84,13 +84,19 @@ export default class CaseDetail extends LightningElement {
   }
   
   async handleFindProviders() {
+    // 
     const result = await ProvidersModal.open({
       caseId: this._recordData.Id
     });
-    if (result === null) {
-      this.demoResult = 'dismiss';
-    } else {
-      this.demoResult = result;
+    if (result.status === 'success') {
+      this.demoResult = 'success';
+      // handle refresh logic
+    } else if (result.status === 'error'){
+      this.demoResult = 'error';
+      // handle error toast logic
+    }
+    else {
+      this.demoResult = result.status;
     }
   }
   

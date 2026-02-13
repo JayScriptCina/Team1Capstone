@@ -4,7 +4,18 @@
 
 public with sharing class ProviderInteractionController {
   
-  // Returns the Case Providers the user has access to in SF database
+  public class ActionResponse {
+    @AuraEnabled public Boolean success;
+    @AuraEnabled public String message;
+
+    public ActionResponse(Boolean success, String message) {
+      this.success = success;
+      this.message = message;
+    }
+  }
+
+
+  //** Returns the Case Providers the user has access to in SF database
   @AuraEnabled(cacheable=true)
   public static List<Provider__c> getProviders(Id caseId) {
     
@@ -14,6 +25,10 @@ public with sharing class ProviderInteractionController {
     WHERE Id = :caseId
     LIMIT 1
     ];
+
+    if (c.Triage_Category__c == null) {
+      return new List<Provider__c>();
+    }
     
     return [
     SELECT Id, Name__c, Phone__c, Location__c, Distance_Miles__c, Capacity_Status__c, Service_Category__c, Specialty__c, Rating__c, Accepting_New_Patients__c
@@ -24,7 +39,13 @@ public with sharing class ProviderInteractionController {
     ];
   }
   
-  public static String setProvider(Id caseId, Id providerId) {
+  //** Creates a Case_Provider__c connection between a case and selected provider(s). Inserts a Case_Activity__c log to finish
+  @AuraEnabled
+  public static ActionResponse setProviders(Id caseId, List<Id> providerIds) {
+
+    if (providerIds == null || providerIds.isEmpty()) {
+      return new ActionResponse(false, 'No providers selected');
+    }
     
     // Query Case & Provider
     Case c = [
@@ -34,60 +55,74 @@ public with sharing class ProviderInteractionController {
     LIMIT 1
     ];
 
-    Provider__c p = [
+    List<Provider__c> providers = [
     SELECT Id, Accepting_New_Patients__c
     FROM Provider__c
-    WHERE Id = :providerId
-    LIMIT 1
+    WHERE Id IN :providerIds
     ];
 
-    // Check for null
-    if (c == null || p == null) {
-      return 'Invalid Case or Provider';
+    // Check for duplicates
+    Set<Id> existingProviderIds = new Set<Id>();
+    for (Case_Provider__c cp : [
+      SELECT Provider__c
+      FROM Case_Provider__c
+      WHERE Case__c = :c.Id
+      AND Provider__c IN :providerIds
+    ]) {
+      existingProviderIds.add(cp.Provider__c);
     }
 
-    // No duplicates!
-    if ([SELECT COUNT() FROM Case_Provider__c WHERE Case__c = :c.Id AND Provider__c = :p.Id] > 0) {
-      return 'This provider is already attached to the case';
+    List<Case_Provider__c> linksToInsert = new List<Case_Provider__c>();
+
+    for (Provider__c p : providers) {
+      if (
+        p.Accepting_New_Patients__c &&
+        !existingProviderIds.contains(p.Id)
+      ) {
+        linksToInsert.add(new Case_Provider__c(
+          Case__c = c.Id,
+          Provider__c = p.Id
+        ));
+      }
     }
 
-    // Ensure provider is accepting patients
-    if (p.Accepting_New_Patients__c != true) {
-      return 'This provider is currently not accepting patients. Please choose another';
+    if (linksToInsert.isEmpty()) {
+      return new ActionResponse(
+        false,
+        'All selected providers are either already attached or not accepting patients'
+      );
     }
-    
-    // Create Case_Provider__c relationship between c and p
-    Case_Provider__c cp = new Case_Provider__c();
-    cp.Case__c = c.Id;
-    cp.Provider__c = p.Id;
-    
+
+    // Insert Case_Provider__c records
     try {
-      insert as user cp;
-    }
-    catch (Exception e) {
-      System.debug('Error inserting Case Provider: ' + e.getMessage());
-      return 'Error inserting Case Provider';
+      insert as user linksToInsert;
+    } catch (Exception e) {
+      System.debug('Error inserting Case Providers: ' + e.getMessage());
+      return new ActionResponse(false, 'Failed to attach providers');
     }
     
     // Create Case_Activity__c for case
-    Case_Activity__c ca = new Case_Activity__c(
-      Activity_Type__c = 'Provider Lookup',
-      Case__c = c.Id,
-      Context__c = 'A Provider has been attached to this case' // Can make this more detailed!
-    );
-    
     try {
-      insert as user ca;
+      insert as user new Case_Activity__c(
+        Activity_Type__c = 'Provider Lookup',
+        Case__c = c.Id,
+        Context__c = linksToInsert.size() + ' provider(s) attached to this case'
+      );
     }
     catch (Exception e) {
       System.debug('Error inserting Case Activity: ' + e.getMessage());
-      return 'Error inserting Case Activity';
+      return new ActionResponse(false, 'Providers attached, but activity failed');
     }
     
     // Change case status to In Progress -> this will trigger the after update case activity creation as well
-    c.Status = 'In Progress';
-    update as user c;
+    if (c.Status != 'In Progress') {
+      c.Status = 'In Progress';
+      update as user c;
+    }
     
-    return 'Success'; // should return true is process finishes
+    return new ActionResponse(
+      true,
+      linksToInsert.size() + ' provider(s) successfully attached'
+    );
   }
 }

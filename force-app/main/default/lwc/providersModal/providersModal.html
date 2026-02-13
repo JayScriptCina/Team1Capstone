@@ -7,6 +7,7 @@
     key-field="id"
     data={sortedProviders}
     columns={columns}
+    onrowselection={handleRowSelection}
     ></lightning-datatable>
     
     <!-- No Records Message -->
@@ -19,7 +20,7 @@
     type="submit"
     label="Select"
     onclick={handleSelect}
-    disabled={isSelectDisabled}>
+    disabled={selectButtonDisabled}>
   </lightning-button>
   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
   

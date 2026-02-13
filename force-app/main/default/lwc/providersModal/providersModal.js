@@ -6,7 +6,9 @@ import RATING_FIELD from '@salesforce/schema/Provider__c.Rating__c';
 import SERVICE_CATEGORY_FIELD from '@salesforce/schema/Provider__c.Service_Category__c';
 import SPECIALTY_FIELD from '@salesforce/schema/Provider__c.Specialty__c';
 import getProviders from '@salesforce/apex/ProviderInteractionController.getProviders';
-// import setProvider from '@salesforce/apex/ProviderInteractionController.setProvider';
+import setProviders from '@salesforce/apex/ProviderInteractionController.setProviders';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+
 const COLUMNS = [
   { label: 'Provider Name', fieldName: NAME_FIELD.fieldApiName, type: 'text' },
   { label: 'Rating', fieldName: RATING_FIELD.fieldApiName, type: 'text'},
@@ -17,16 +19,16 @@ const COLUMNS = [
 
 export default class ProvidersModal extends LightningModal {
   @api caseId; // case selected from parent
-  providerSelected;
-
-  providersData = []
-  sortedProviders = [] 
-
+  selectedProviders = [];
+  
+  providersData = [];
+  sortedProviders = [];
+  
   columns = COLUMNS;
   defaultSortDirection = 'desc';
   sortDirection = 'desc';
   sortedBy;
-
+  
   @wire(getProviders, { caseId: '$caseId'})
   wiredRequests({ data, error}) {
     if(data) {
@@ -43,20 +45,60 @@ export default class ProvidersModal extends LightningModal {
     return this.sortedProviders && this.sortedProviders.length > 0;
   }
   
-  get errors() {
-    return this.providersData.error ? reduceErrors(this.providersData.error) : [];
+  get selectButtonDisabled() {
+    return this.selectedProviders.length < 1;
   }
-
-  onHandleSort(event) {
-
+  
+  handleRowSelection(event) {
+    this.selectedProviders = event.detail.selectedRows;
+    console.log('Selected providers:', this.selectedProviders);
   }
+  
+  async handleSelect() {
+    const providerIds = this.selectedProviders.map(p => p.Id);
+    
+    // Call Apex
+    try {
+      const result = await setProviders({
+        caseId: this.caseId,
+        providerIds: providerIds
+      });
 
-  handleSelect() {
+      if (result.success) {
+        this.dispatchEvent(
+          new ShowToastEvent({
+            title: 'Success',
+            message: result.message,
+            variant: 'success',
+          })
+          // refresh console(s)
+        );
+        this.close('success');
+      } else { // result is false
+        this.dispatchEvent(
+          new ShowToastEvent({
+            title: 'Error',
+            message: result.message,
+            variant: 'error'
+          })
+        );
+      }
+    } catch (error) {
+      console.log('Error in apex:', error);
+    //   this.dispatchEvent(
+    //     new ShowToastEvent({
+    //       title: 'Error',
+    //       message: error.body?.message || 'Unknown error occurred',
+    //       variant: 'error'
+    //     })
+    //   );
+    }
+    
     // return the provider object
-    this.close({ status: 'success', providerId: this.providerSelected });
+    //this.close({ status: 'success', providerId: this.providerSelected });
   }
-
+  
   handleCancel() {
-    this.close('cancel')
+    this.close({ status: 'cancel' });
   }
 }
