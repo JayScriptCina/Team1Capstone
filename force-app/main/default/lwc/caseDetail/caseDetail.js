@@ -4,11 +4,11 @@ import ProvidersModal from 'c/providersModal';
 
 export default class CaseDetail extends LightningElement {
   _recordData;
+  _caseProviderData;
   @track isEditMode = false;
   @track isSaving = false;
   @track isDirty = false;
   @track saveButtonLabel = "Save";
-    
   @api
   get recordData() {
     return this._recordData;
@@ -34,6 +34,19 @@ export default class CaseDetail extends LightningElement {
     
     this._recordData = value;
     console.log('_recordData in caseDetail.js has been updated');
+  }
+
+  @api
+  get caseProviderData() {
+    return this._caseProviderData;
+  }
+  set caseProviderData(value) {
+    this._caseProviderData = value
+    console.log('_caseProviderData in caseDetail.js has been updated');
+  }
+
+  get caseProviderList() {
+    return this._caseProviderData[0];
   }
   
   get recordId() {

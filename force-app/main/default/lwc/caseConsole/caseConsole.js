@@ -15,10 +15,13 @@ import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 import getCases from '@salesforce/apex/CaseConsoleController.getCases';
+import getCaseProviders from '@salesforce/apex/CaseConsoleController.getCaseProviders';
 
 export default class CaseConsole extends LightningElement {
   @track cases = [];
+  @track caseProviders = [];
   wiredCasesResult;
+  wiredCaseProvidersResult;
   @track statusOptions = [];
   @track priorityOptions = [];
   @track recordTypeOptions = [];
@@ -36,6 +39,21 @@ export default class CaseConsole extends LightningElement {
         caseUrl: '/' + item.Id
       }));
       console.log('data received from wire:', result.data)
+    }
+    else if(result.error) {
+      console.error("Wire error:", result.error);
+    }
+  };
+
+  @wire(getCaseProviders)
+  wiredCaseProviders(result) {
+    this.wiredCaseProvidersResult = result;
+    if(result.data) { // creates a clickable link for Name
+      this.caseProviders = result.data.map(item => ({
+        ...item,
+        nameUrl: '/' + item.Provider__r.Id
+      }));
+      console.log('data received from wire:', result.data);
     }
     else if(result.error) {
       console.error("Wire error:", result.error);
@@ -108,16 +126,32 @@ export default class CaseConsole extends LightningElement {
     if(!this.selectedCaseId || !this.cases) return null;
     return this.cases.find(c => c.Id === this.selectedCaseId);
   }
+
+  get caseProviderData() {
+    if(!this.selectedCaseId || !this.caseProviders) return null;
+    const temp = this.caseProviders.filter(cp => cp.Case__c === this.selectedCaseId);
+    console.log('returning caseProviderData:', temp);
+    return temp;
+  }
   
   handleRefreshButton() {
     refreshApex(this.wiredCasesResult)
     .then(() => {
-      console.log('Data refreshed successfully');
+      console.log('wiredCasesResult refreshed successfully');
     })
     .catch(error => {
       console.error('Error refreshing data:', error);
     });
-    console.log('refreshing apex');
+
+    console.log("beginning refresh of case providers");
+
+    refreshApex(this.wiredCaseProvidersResult)
+    .then(() => {
+      console.log('wiredCaseProvidersResult refreshed successfully');
+    })
+    .catch(error => {
+      console.error('Error refreshing data:', error);
+    });
     
     this.dispatchEvent(
       new ShowToastEvent({

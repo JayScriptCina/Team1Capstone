@@ -30,4 +30,15 @@ public with sharing class CaseConsoleController {
     
     return results;
   }
+
+  @AuraEnabled(cacheable=true)
+  public static List<Case_Provider__c> getCaseProviders() {
+    
+    return [SELECT Id, Case__c, Provider__c,
+    Provider__r.Name__c, Provider__r.Phone__c, Provider__r.Location__c, Provider__r.Distance_Miles__c, Provider__r.Capacity_Status__c,
+    Provider__r.Service_Category__c, Provider__r.Specialty__c, Provider__r.Rating__c, Provider__r.Accepting_New_Patients__c
+    FROM Case_Provider__c
+    WITH USER_MODE
+    ];
+  }
 }
