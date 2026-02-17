@@ -6,35 +6,35 @@ public class TestDataFactory {
   // Returns an already inserted User with Case Agent profile and Case Agent permission set
   public static User createAgentUser() {
     Profile p = [
-    SELECT Id FROM Profile
-    WHERE Name = 'Case Agent'
-    LIMIT 1
+      SELECT Id FROM Profile
+      WHERE Name = 'Case Agent'
+      LIMIT 1
     ];
     
     User agent = new User(
-    Alias = 'agent',
-    Email = 'agent@test.com',
-    EmailEncodingKey = 'UTF-8',
-    LastName = 'Agent',
-    LanguageLocaleKey = 'en_US',
-    LocaleSidKey = 'en_US',
-    ProfileId = p.Id,
-    TimeZoneSidKey = 'America/New_York',
-    Username = 'agent.' + System.currentTimeMillis() + '@test.com'
+      Alias = 'agent',
+      Email = 'agent@test.com',
+      EmailEncodingKey = 'UTF-8',
+      LastName = 'Agent',
+      LanguageLocaleKey = 'en_US',
+      LocaleSidKey = 'en_US',
+      ProfileId = p.Id,
+      TimeZoneSidKey = 'America/New_York',
+      Username = 'agent.' + System.currentTimeMillis() + '@test.com'
     );
     
     insert agent;
     
     PermissionSet caseAgentPS = [
-    SELECT Id
-    FROM PermissionSet
-    WHERE Name = 'Case_Agent'
-    LIMIT 1
+      SELECT Id
+      FROM PermissionSet
+      WHERE Name = 'Case_Agent'
+      LIMIT 1
     ];
     
     PermissionSetAssignment psa = new PermissionSetAssignment(
-    AssigneeId = agent.Id,
-    PermissionSetId = caseAgentPS.Id
+      AssigneeId = agent.Id,
+      PermissionSetId = caseAgentPS.Id
     );
     
     insert psa;
@@ -44,36 +44,36 @@ public class TestDataFactory {
   
   // Returns an already inserted User with Case Supervisor profile and Case Supervisor permission set
   public static User createSupervisorUser() {
-    Profile p = [
-    SELECT Id FROM Profile
-    WHERE Name = 'Case Supervisor'
-    LIMIT 1
+      Profile p = [
+      SELECT Id FROM Profile
+      WHERE Name = 'Case Supervisor'
+      LIMIT 1
     ];
     
     User Supervisor = new User(
-    Alias = 'super',
-    Email = 'supervisor@test.com',
-    EmailEncodingKey = 'UTF-8',
-    LastName = 'Supervisor',
-    LanguageLocaleKey = 'en_US',
-    LocaleSidKey = 'en_US',
-    ProfileId = p.Id,
-    TimeZoneSidKey = 'America/New_York',
-    Username = 'supervisor.' + System.currentTimeMillis() + '@test.com'
+      Alias = 'super',
+      Email = 'supervisor@test.com',
+      EmailEncodingKey = 'UTF-8',
+      LastName = 'Supervisor',
+      LanguageLocaleKey = 'en_US',
+      LocaleSidKey = 'en_US',
+      ProfileId = p.Id,
+      TimeZoneSidKey = 'America/New_York',
+      Username = 'supervisor.' + System.currentTimeMillis() + '@test.com'
     );
     
     insert supervisor;
     
     PermissionSet caseSupervisorPS = [
-    SELECT Id
-    FROM PermissionSet
-    WHERE Name = 'Case_Supervisor'
-    LIMIT 1
+      SELECT Id
+      FROM PermissionSet
+      WHERE Name = 'Case_Supervisor'
+      LIMIT 1
     ];
     
     PermissionSetAssignment psa = new PermissionSetAssignment(
-    AssigneeId = supervisor.Id,
-    PermissionSetId = caseSupervisorPS.Id
+      AssigneeId = supervisor.Id,
+      PermissionSetId = caseSupervisorPS.Id
     );
     
     insert psa;
@@ -85,17 +85,17 @@ public class TestDataFactory {
   // Queue Name options include Housing, Medical, or Nutrition
   public static void assignUserToQueue(User user, String queueName) {
     List<Group> queue = [
-    SELECT Id
-    FROM Group
-    WHERE DeveloperName = :queueName
-    AND Type = 'Queue'
-    LIMIT 1
+      SELECT Id
+      FROM Group
+      WHERE DeveloperName = :queueName
+      AND Type = 'Queue'
+      LIMIT 1
     ];
     
     // Add User to Queue
     GroupMember member = new GroupMember(
-    GroupId = queue[0].Id,
-    UserOrGroupId = user.Id
+      GroupId = queue[0].Id,
+      UserOrGroupId = user.Id
     );
     
     insert member;
