@@ -194,14 +194,29 @@ Responsible for:
 
 ### CaseConsole LWC
 
-* Displays case list
-* Displays case detail
+* Accessible to Agents and Supervisors
+* Displays case list with dynamic filtering for:
+  * Case Number
+  * Status
+  * Priority
+  * Record Type
+  * Contact
+  * My Assignments
+* Displays case details and SLA countdown
+* Edit and Save actions following FLS
 * Executes provider lookup
 * Assigns providers to cases
 
 ### CaseTimeline LWC
 
-* Displays Case_Activity__c history
+* Accessible to Supervisors only
+* Displays Case_Activity__c history with dynamic filtering for:
+  * Case Number
+  * Created Date
+  * Type
+  * Context
+  * Error Messages
+  * Stack Trace
 * Serves as full audit trail view
 
 ---
