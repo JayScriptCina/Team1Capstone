@@ -89,6 +89,23 @@ export default class CaseDetail extends LightningElement {
     this.showSavedDataToast();
     this.handleRefresh();
   }
+
+  handleError(event) {
+    console.error('Error in form submission', event.detail);
+    // This will display the error in the console
+
+    this.isSaving = false;
+    this.saveButtonLabel = 'Save';
+
+    this.dispatchEvent(
+      new ShowToastEvent({
+        title: 'There was a problem',
+        message: event.detail.detail,
+        variant: 'error',
+        mode: 'dismissible'
+      })
+    );
+}
   
   handleRefresh() {
     this.dispatchEvent(new CustomEvent('refreshbutton'));

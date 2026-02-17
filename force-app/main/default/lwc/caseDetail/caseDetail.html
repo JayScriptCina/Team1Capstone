@@ -11,7 +11,8 @@
     <lightning-record-edit-form
     record-id={recordId}
     object-api-name='Case'
-    onsuccess={handleSuccess}>
+    onsuccess={handleSuccess}
+    onerror={handleError}>
     <template if:true={recordId}>
       <template if:false={isEditMode}>
         <div class="slds-box slds-theme_default">
