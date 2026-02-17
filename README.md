@@ -377,9 +377,7 @@ Apex:
 
 See:
 
-```
-/dd54be8b-1.png
-```
+
 
 ---
 
@@ -387,9 +385,7 @@ See:
 
 See:
 
-```
-/aaf632b2-1.png
-```
+
 
 This diagram shows:
 
