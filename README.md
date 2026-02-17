@@ -1,15 +1,4 @@
-Perfect — below is your README converted into:
-
-1. ✅ **GitHub-ready Markdown with anchor links and Table of Contents**
-2. ✅ **Improved Architecture section with structured Markdown formatting**
-
-You can copy-paste this directly into `README.md`.
-
----
-
 # 📘 Public Health Case Management System
-
----
 
 ## 📑 Table of Contents
 
@@ -389,7 +378,7 @@ Apex:
 See:
 
 ```
-/docs/ERD_Public_Health_Case_Management.png
+/ERD.pdf
 ```
 
 ---
@@ -399,7 +388,7 @@ See:
 See:
 
 ```
-/docs/Sequence_Public_Health_Case_Management.png
+/Sequence_Diagram.pdf
 ```
 
 This diagram shows:
