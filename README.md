@@ -373,13 +373,13 @@ Apex:
 
 See:
 
-ADD IMAGE!!!!
+<img width="770" height="2070" alt="dd54be8b-1" src="https://github.com/user-attachments/assets/3fe7134f-6089-4e08-907c-3ce10600741c" />
 
 ---
 
 # Sequence Diagram
 
-ADD IMAGE!!!!
+<img width="6923" height="5331" alt="aaf632b2-1" src="https://github.com/user-attachments/assets/f8a1d33e-0dcf-4697-be98-596f7715542c" />
 
 This diagram shows:
 
