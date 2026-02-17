@@ -378,7 +378,7 @@ Apex:
 See:
 
 ```
-/ERD.pdf
+/![ERD Diagram](ERD.pdf)
 ```
 
 ---
@@ -388,7 +388,7 @@ See:
 See:
 
 ```
-/Sequence_Diagram.pdf
+/![Sequence Diagram](Sequence Diagram.pdf)
 ```
 
 This diagram shows:
