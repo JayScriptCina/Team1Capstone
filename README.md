@@ -62,12 +62,11 @@ Responsibilities:
 
 #### Account
 
-Represents a household or organization.
+Represents a household.
 
 #### Contact
 
-Represents the citizen/requestor.
-Linked to both Account and Case.
+Represents the citizen. Linked to both Account and Case.
 
 #### Case_Activity__c
 
@@ -80,8 +79,6 @@ Audit log object used to record:
 * Provider selection
 * Errors
 * SLA events
-
-Supports compliance and timeline visualization.
 
 #### Provider__c
 
@@ -99,7 +96,6 @@ Enables:
 
 * Multiple provider options per case
 * Provider selection
-* Historical traceability
 
 ---
 
@@ -107,7 +103,7 @@ Enables:
 
 ### Screen Flow – Case Intake
 
-Triggered manually by the Agent.
+Triggered manually in the Home Tab by the Agent.
 
 Handles:
 
@@ -377,17 +373,13 @@ Apex:
 
 See:
 
-<img width="770" height="2070" alt="dd54be8b-1" src="https://github.com/user-attachments/assets/2e154669-53e2-4c81-90cd-204dd9f522e5" />
-
+ADD IMAGE!!!!
 
 ---
 
 # Sequence Diagram
 
-See:
-
-<img width="6923" height="5331" alt="aaf632b2-1" src="https://github.com/user-attachments/assets/065c310f-91e6-4152-ae36-ac808ea3daee" />
-
+ADD IMAGE!!!!
 
 This diagram shows:
 
