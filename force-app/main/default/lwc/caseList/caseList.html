@@ -94,6 +94,13 @@
       variant="neutral"
       onclick={handleRefresh}
       ></lightning-button>
+
+      <lightning-input class="slds-m-horizontal_small slds-align_absolute-center"
+        type="checkbox"
+        label="My Assignments"
+        onchange={handleMyAssignmentsChange}
+        data-filter="myAssignments">
+      </lightning-input>
     </div>
     
     <!-- DataTable -->

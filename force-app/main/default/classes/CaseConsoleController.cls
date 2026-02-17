@@ -9,7 +9,7 @@ public with sharing class CaseConsoleController {
   public static List<CaseDTO> getCases() {
     List<CaseDTO> results = new List<CaseDTO>();
     for (Case c : [
-    SELECT Id, CaseNumber, RecordType.Name, OwnerId, Description, Priority, SLA_Target__c, SLAViolation__c, Status, Subject, Triage_Category__c,
+    SELECT Id, CaseNumber, RecordType.Name, OwnerId, Description, Priority, SLA_Target__c, SLAViolation__c, Status, Subject, Triage_Category__c, SLA_Status__c,
     Case_Provider__c,
     AccountId, ContactId, ContactPhone, Contact.Name
     FROM Case
@@ -17,6 +17,7 @@ public with sharing class CaseConsoleController {
     ]) {
       CaseDTO dto = new CaseDTO();
       dto.Id = c.Id;
+      dto.OwnerId = c.OwnerId;
       dto.CaseNumber = c.CaseNumber;
       dto.Status = c.Status;
       dto.Priority = c.Priority;
@@ -24,6 +25,7 @@ public with sharing class CaseConsoleController {
       dto.ContactId = c.ContactId != null ? c.ContactId : null;
       dto.ContactName = c.Contact != null ? c.Contact.Name : null;
       dto.SLATarget = c.SLA_Target__c != null ? c.SLA_Target__c : null;
+      dto.SLAStatus = c.SLA_Status__c != null ? c.SLA_Status__c : null;
       
       results.add(dto);
     }

@@ -72,27 +72,18 @@ private class CaseConsoleControllerTest {
   @IsTest
   static void testGetCaseProviders_UserMode() {
     // Create an Agent in the Medical Queue
-    User testUser = TestDataFactory.createAgentUser();
-    TestDataFactory.assignUserToQueue(testUser, 'Housing');
+    User agent = TestDataFactory.createAgentUser();
+    TestDataFactory.assignUserToQueue(agent, 'Housing');
     
     // Create case outside of the agent's queues
-    System.runAs(testUser) {
+    System.runAs(agent) {
       Case c = TestDataFactory.createCase('Housing');
       insert c;
       
-      Provider__c p = new Provider__c(
-        Name__c = 'Test Provider',
-        Service_Category__c = 'housing',
-        Accepting_New_Patients__c = true,
-        Rating__c = '⭐️⭐️⭐️⭐️'
-      );
+      Provider__c p = TestDataFactory.createProvider('Housing');
       insert p;
-      
-      Case_Provider__c cp = new Case_Provider__c(
-        Case__c = c.Id,
-        Provider__c = p.Id
-      );
-      insert cp;
+
+      TestDataFactory.attachProviderToCase(c, p);
       
       Test.startTest();
       List<Case_Provider__c> results =

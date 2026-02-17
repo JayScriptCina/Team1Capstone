@@ -3,6 +3,7 @@
 // Desc: A dynamic list that displays Case data which can be filtered via typing in values (ex. name) or picking values (ex. picklist)
 // Dynamic Data Table base code credit: https://medium.com/@gadige.sfdc/lwc-data-table-with-dynamic-filters-28387a11cab4
 import { LightningElement, api, track } from 'lwc';
+import USER_ID from '@salesforce/user/Id';
 
 export default class CaseList extends LightningElement {
   // Data from caseConsole LWC
@@ -15,12 +16,14 @@ export default class CaseList extends LightningElement {
   @track tableData = [];
   @track filteredData = [];
   @track slicedData = [];
-  @track filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '' };
+  @track filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '', myAssignments: false };
   @track filteredDataCount;
   
   // Variables for datatable pagination
   index = 0;
   increment = 6;
+
+  currentUserId = USER_ID;
   
   // Columns Definition
   columns = [
@@ -39,7 +42,8 @@ export default class CaseList extends LightningElement {
         target: '_blank'
       }
     },
-    { label: 'SLA Target', fieldName: 'SLATarget', type: 'date' },
+    //{ label: 'SLA Target', fieldName: 'SLATarget', type: 'date' },
+    { label: 'SLA Status', fieldName: 'SLAStatus', type: 'text' },
     {
       type: 'button',
       typeAttributes: {
@@ -122,9 +126,13 @@ export default class CaseList extends LightningElement {
   handleFilterChange(event) {
     const filterType = event.target.dataset.filter;
     const filterValue = event.target.value;
-    console.log('value selected was', event.target.value);
     
     this.filters = { ...this.filters, [filterType]: filterValue };
+    this.applyFilters();
+  }
+
+  handleMyAssignmentsChange(event) {
+    this.filters.myAssignments = event.target.checked;
     this.applyFilters();
   }
   
@@ -148,7 +156,7 @@ export default class CaseList extends LightningElement {
         const priority = (item.Priority || '');
         const recordType = (item.RecordTypeName || '');
         const contact = (item.ContactName || '');
-        // console.log( 'status:', status, 'priority', priority, 'recordType', recordType, 'contact', contact);
+        const ownerId =(item.OwnerId || '');
         return (
           (this.filters.caseNumber ? caseNumber.includes(this.filters.caseNumber) : true) &&
           (
@@ -158,7 +166,8 @@ export default class CaseList extends LightningElement {
           ) &&
           (this.filters.priority ? priority === this.filters.priority : true) &&
           (this.filters.recordType ? recordType === this.filters.recordType : true) &&
-          (this.filters.contact ? contact.toLowerCase().includes(this.filters.contact.toLowerCase()) : true)
+          (this.filters.contact ? contact.toLowerCase().includes(this.filters.contact.toLowerCase()) : true) &&
+          (this.filters.myAssignments ? ownerId === this.currentUserId : true)
         );
       });
       
@@ -171,7 +180,7 @@ export default class CaseList extends LightningElement {
   
   // Reset Filters
   resetFilters() {
-    this.filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '' };
+    this.filters = { caseNumber: '', status: '', priority: '', recordType: '', contact: '', myAssignments: false };
     this.filteredData = [...this.tableData];
     this.updateSlicedData();
     this.index = 0;
@@ -180,6 +189,10 @@ export default class CaseList extends LightningElement {
     this.template.querySelectorAll('lightning-input, lightning-combobox').forEach(input => {
       input.value = '';
     });
+
+    // And the checkbox:
+    const myAssignmentsCheckbox = this.template.querySelector('lightning-input[data-filter="myAssignments"]');
+    if (myAssignmentsCheckbox) { myAssignmentsCheckbox.checked = false; }
   }
   
   handlePrevious() { 

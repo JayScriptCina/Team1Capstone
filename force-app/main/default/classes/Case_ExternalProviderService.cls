@@ -1,32 +1,15 @@
 /**
  * Case_ExternalProviderService
- *
- * OPTION B IMPLEMENTATION (Allow "duplicate" provider_id values as separate Provider__c rows)
- *
- * Goal:
- * - Persist ALL rows from the API (ex: 50 fixed rows) even if provider_id repeats.
- *
- * Key Design:
- * - Use the API numeric "id" as the upsert key (unique per row in this dataset).
- *   => Provider__c.Provider_Id__c MUST be configured as External ID + Unique.
- * - Store API "provider_id" (e.g., "user_70") in Provider__c.Provider_External_Id__c
- *   => Provider_External_Id__c should NOT be unique (duplicates allowed).
- *
- * Picklists:
- * - Mapped case-insensitively to your configured picklist values to avoid
- *   INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST errors.
- *
- * Run:
- * - System.enqueueJob(new Case_ExternalProviderService());
+ * Run: System.enqueueJob(new Case_ExternalProviderService());
  */
 public with sharing class Case_ExternalProviderService implements Queueable, Database.AllowsCallouts {
 
-    // Named Credential: Provider_API (base URL), plus relative path
+    // Named Credential: Provider_API (base URL)
     private static final String ENDPOINT = 'callout:Provider_API/provider_data';
 
     public void execute(QueueableContext qc) {
         try {
-            // 1) Call the external API
+            // external API call
             HttpRequest req = new HttpRequest();
             req.setEndpoint(ENDPOINT);
             req.setMethod('GET');
@@ -39,7 +22,7 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
                 throw new CalloutException('HTTP ' + res.getStatusCode() + ': ' + res.getBody());
             }
 
-            // 2) Deserialize the response (expected: JSON array)
+            // Deserialize the response-json expected
             Object root = JSON.deserializeUntyped(res.getBody());
             if (!(root instanceof List<Object>)) return;
 
@@ -52,38 +35,31 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
             Map<String, String> capMap  = buildPicklistMap(Provider__c.Capacity_Status__c);
             Map<String, String> rateMap = buildPicklistMap(Provider__c.Rating__c);
 
-            // 4) Transform API rows into Provider__c records
+            // Transform API rows into Provider__c records
             List<Provider__c> toUpsert = new List<Provider__c>();
 
             for (Object o : raw) {
                 if (!(o instanceof Map<String, Object>)) continue;
                 Map<String, Object> prov = (Map<String, Object>) o;
 
-                // OPTION B: Use API "id" as the stable unique key (row identity)
-                // Provider__c.Provider_Id__c MUST be External ID + Unique
+ 
                 String apiRowId = getString(prov, 'id');
                 if (String.isBlank(apiRowId)) continue;
 
                 Provider__c p = new Provider__c();
 
-                // Upsert key = API "id" (unique per row)
                 p.Provider_Id__c = apiRowId;
 
-                // provider_id from API can repeat (duplicates allowed)
                 p.Provider_External_Id__c = getString(prov, 'provider_id');
 
-                // Provider name and basic fields
                 p.Name__c     = left(getString(prov, 'provider_name'), 255);
                 p.Phone__c    = getString(prov, 'phone_number');
                 p.Location__c = left(getString(prov, 'location'), 255);
 
-                // Distance (Number field)
                 p.Distance_Miles__c = getDecimal(prov, 'distance_miles');
 
-                // Checkbox
                 p.Accepting_New_Patients__c = getBoolean(prov, 'accepting_new_patients');
 
-                // Picklists (matched case-insensitively; returns null if no match)
                 p.Service_Category__c = picklistMatch(svcMap,  getString(prov, 'service_category'));
                 p.Specialty__c        = picklistMatch(specMap, getString(prov, 'specialty'));
                 p.Capacity_Status__c  = picklistMatch(capMap,  getString(prov, 'capacity_status'));
@@ -99,13 +75,11 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
             Database.upsert(toUpsert, Provider__c.Provider_Id__c, false);
 
         } catch (Exception ex) {
-            // Optional: route through centralized handler
-            // Case_ErrorHandler.handle(ex, null, 'Case_ExternalProviderService.execute');
             System.debug('Case_ExternalProviderService failed: ' + ex.getMessage());
         }
     }
 
-    // -------------------- Helpers --------------------
+    // -------------------- Helper Functions  --------------------
 
     private static String getString(Map<String, Object> m, String key) {
         if (m == null || !m.containsKey(key) || m.get(key) == null) return null;

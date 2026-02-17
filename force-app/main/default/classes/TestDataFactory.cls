@@ -80,22 +80,22 @@ public class TestDataFactory {
     
     return supervisor;
   }
-
+  
   // Assigns a user (usually an Agent) to queue specified
   // Queue Name options include Housing, Medical, or Nutrition
   public static void assignUserToQueue(User user, String queueName) {
     List<Group> queue = [
-      SELECT Id
-      FROM Group
-      WHERE DeveloperName = :queueName
-      AND Type = 'Queue'
-      LIMIT 1
+    SELECT Id
+    FROM Group
+    WHERE DeveloperName = :queueName
+    AND Type = 'Queue'
+    LIMIT 1
     ];
     
     // Add User to Queue
     GroupMember member = new GroupMember(
-      GroupId = queue[0].Id,
-      UserOrGroupId = user.Id
+    GroupId = queue[0].Id,
+    UserOrGroupId = user.Id
     );
     
     insert member;
@@ -110,7 +110,7 @@ public class TestDataFactory {
     else {
       recordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName().get('Other').getRecordTypeId();
     }
-
+    
     // Create Case
     Case c = new Case(
       Subject = 'Test Case',
@@ -120,7 +120,7 @@ public class TestDataFactory {
     );
     return c;
   }
-
+  
   // Type options include Housing, Medical, or Nutrition
   public static List<Case> createBulkCases(Integer count, String type) {
     Id recordTypeId;
@@ -130,7 +130,7 @@ public class TestDataFactory {
     else {
       recordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName().get('Other').getRecordTypeId();
     }
-
+    
     List<Case> cases = new List<Case>();
     for (Integer i = 0; i < count; i++) {
       cases.add(new Case(
@@ -142,6 +142,32 @@ public class TestDataFactory {
       ));
     }
     return cases;
+  }
+
+  // Type options include Housing, Medical, or Nutrition
+  public static Provider__c createProvider(String type) {
+    String category;
+    if(type == 'Housing' || type == 'Medical' || type == 'Nutrition') {
+      category = type.toLowerCase();
+    }
+    else {
+      System.assert(false, 'invalid type of provider category in TestDataFactory.createProvider(). type: ' + type);
+      //throw new Exception('invalid type of provider category in TestDataFactory.createProvider(). type: ' + type);
+    }
+    return new Provider__c(
+      Name__c = 'Test Provider',
+      Service_Category__c = category,
+      Accepting_New_Patients__c = true,
+      Rating__c = '⭐️⭐️⭐️⭐️'
+    );
+  }
+  
+  public static void attachProviderToCase(Case c, Provider__c p) {
+    Case_Provider__c cp = new Case_Provider__c(
+      Case__c = c.Id,
+      Provider__c = p.Id
+    );
+    insert cp;
   }
   
   
