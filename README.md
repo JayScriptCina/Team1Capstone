@@ -35,7 +35,7 @@ This application implements a centralized public health case management platform
 
 The system replaces manual, inconsistent case handling processes with a structured, automated workflow.
 
-The **Case** object serves as the system of record. All lifecycle events, routing decisions, SLAs, provider enrichment, approvals, and audit history are anchored to the Case object.
+The **Case** object serves as the system of record. All lifecycle events, routing decisions, SLAs, provider enrichment, approvals, and audit history are anchored to the Case object via Case Activity Object.
 
 ---
 
@@ -89,7 +89,7 @@ Stores provider data retrieved from an external API.
 Junction object connecting:
 
 ```
-Case 1 —— * Case_Provider__c * —— 1 Provider__c
+Case —— * Case_Provider__c * —— Provider__c
 ```
 
 Enables:
@@ -110,15 +110,20 @@ Handles:
 * Citizen lookup or creation
 * Account linking or creation
 * Case data capture
-* SLA calculation
 * Case creation
 * Routing to correct queue
 
 ---
 
+### Routing Subflow (Used in Case Intake)
+
+Checks case category(Medical, Housing, Nutrition) and routes the case its respective queue.
+  
+---
+
 ### SLA Calculation Subflow
 
-Calculates SLA target based on priority:
+Calculates SLA target based on case priority:
 
 * High → +24 hours
 * Medium → +48 hours
