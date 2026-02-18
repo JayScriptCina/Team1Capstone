@@ -27,6 +27,7 @@ export default class CaseConsole extends LightningElement {
   @track recordTypeOptions = [];
   caseRecordTypeId;
   @track selectedCaseId; // used for displaying data to children based on the selection in the caseList child component
+  @track recordDetailData;
   
   // 1. Get Case data in USER_MODE!
   @wire(getCases)
@@ -118,13 +119,17 @@ export default class CaseConsole extends LightningElement {
     
     if(actionName === 'view_details') {
       this.selectedCaseId = rowData.Id;
+      this.updateRecordDetailData();
     }
   }
   
   // Retrieves data used in caseDetail child components
-  get recordDetailData() {
-    if(!this.selectedCaseId || !this.cases) return null;
-    return this.cases.find(c => c.Id === this.selectedCaseId);
+  updateRecordDetailData() {
+    if(!this.selectedCaseId || !this.cases) return;
+
+    console.log('updating recordDetailData')
+    this.recordDetailData = this.cases.find(c => c.Id === this.selectedCaseId);
+    console.log('data is:', this.recordDetailData);
   }
 
   get caseProviderData() {
@@ -138,6 +143,7 @@ export default class CaseConsole extends LightningElement {
     refreshApex(this.wiredCasesResult)
     .then(() => {
       console.log('wiredCasesResult refreshed successfully');
+      console.log('new wired cases:', this.cases);
     })
     .catch(error => {
       console.error('Error refreshing data:', error);
@@ -152,6 +158,8 @@ export default class CaseConsole extends LightningElement {
     .catch(error => {
       console.error('Error refreshing data:', error);
     });
+
+    this.updateRecordDetailData();
     
     this.dispatchEvent(
       new ShowToastEvent({

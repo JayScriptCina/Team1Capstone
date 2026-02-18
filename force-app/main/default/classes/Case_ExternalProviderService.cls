@@ -1,15 +1,10 @@
-/**
- * Case_ExternalProviderService
- * Run: System.enqueueJob(new Case_ExternalProviderService());
- */
+//Run: System.enqueueJob(new Case_ExternalProviderService());
+ 
 public with sharing class Case_ExternalProviderService implements Queueable, Database.AllowsCallouts {
-
-    // Named Credential: Provider_API (base URL)
     private static final String ENDPOINT = 'callout:Provider_API/provider_data';
 
     public void execute(QueueableContext qc) {
         try {
-            // external API call
             HttpRequest req = new HttpRequest();
             req.setEndpoint(ENDPOINT);
             req.setMethod('GET');
@@ -17,25 +12,21 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
             Http http = new Http();
             HttpResponse res = http.send(req);
 
-            // Fail fast on non-2xx responses
             if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
                 throw new CalloutException('HTTP ' + res.getStatusCode() + ': ' + res.getBody());
             }
 
-            // Deserialize the response-json expected
             Object root = JSON.deserializeUntyped(res.getBody());
             if (!(root instanceof List<Object>)) return;
 
             List<Object> raw = (List<Object>) root;
             if (raw.isEmpty()) return;
 
-            // 3) Build case-insensitive maps for picklist matching (Label + Value -> Value)
             Map<String, String> svcMap  = buildPicklistMap(Provider__c.Service_Category__c);
             Map<String, String> specMap = buildPicklistMap(Provider__c.Specialty__c);
             Map<String, String> capMap  = buildPicklistMap(Provider__c.Capacity_Status__c);
             Map<String, String> rateMap = buildPicklistMap(Provider__c.Rating__c);
 
-            // Transform API rows into Provider__c records
             List<Provider__c> toUpsert = new List<Provider__c>();
 
             for (Object o : raw) {
@@ -70,16 +61,13 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
 
             if (toUpsert.isEmpty()) return;
 
-            // 5) Upsert providers by API row id.
-            // allOrNone=false so a single bad record doesn't block the rest.
+
             Database.upsert(toUpsert, Provider__c.Provider_Id__c, false);
 
         } catch (Exception ex) {
             System.debug('Case_ExternalProviderService failed: ' + ex.getMessage());
         }
     }
-
-    // -------------------- Helper Functions  --------------------
 
     private static String getString(Map<String, Object> m, String key) {
         if (m == null || !m.containsKey(key) || m.get(key) == null) return null;
@@ -114,11 +102,7 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
         return (s.length() <= maxLen) ? s : s.substring(0, maxLen);
     }
 
-    /**
-     * Builds a case-insensitive map of allowed picklist entries for a field.
-     * - Key: lowercased label/value
-     * - Value: the actual picklist API value to store
-     */
+
     private static Map<String, String> buildPicklistMap(Schema.SObjectField f) {
         Map<String, String> out = new Map<String, String>();
 
@@ -134,11 +118,7 @@ public with sharing class Case_ExternalProviderService implements Queueable, Dat
         return out;
     }
 
-    /**
-     * Case-insensitive picklist matching:
-     * Returns the correct picklist API value if a match is found; otherwise returns null.
-     * Returning null avoids INVALID_OR_NULL_FOR_RESTRICTED_PICKLIST DML errors.
-     */
+
     private static String picklistMatch(Map<String, String> allowed, String raw) {
         if (String.isBlank(raw) || allowed == null) return null;
 

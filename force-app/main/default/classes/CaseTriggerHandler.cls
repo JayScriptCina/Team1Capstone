@@ -3,7 +3,10 @@
 // Desc: Logic for case creation and insertion
 
 public without sharing class CaseTriggerHandler {
-  
+ 
+  private static final String SUPERVISOR_QUEUE_DEV_NAME = 'Case_Supervisors_Queue';
+  private static Set<Id> resolvedTransferProcessedIds = new Set<Id>();
+
   public static void beforeInsert(List<Case> newCases) {
     enforceRules(newCases);
   }
@@ -40,10 +43,8 @@ public without sharing class CaseTriggerHandler {
     List<String> changes = new List<String>();
     
     for (Case c : newCases) {
-      // Store values that have changed
       Case oldC = oldMap.get(c.Id);
       
-      // Loop thru the fields we track and compare
       for (String fieldName : fieldsToTrack) {
         Object newVal = c.get(fieldName);
         Object oldVal = oldC.get(fieldName);
@@ -65,6 +66,42 @@ public without sharing class CaseTriggerHandler {
     
     if (!logs.isEmpty()) {
       insert logs;
+    }
+    // Collect cases that just updated to resolved
+    List<Case> casesToTransfer = new List<Case>();
+    for (Case c : newCases) {
+      Case oldC = oldMap.get(c.Id);
+      if (oldC == null) continue;
+
+      Boolean statusJustBecameResolved =
+        oldC.Status != 'Resolved' &&
+        c.Status == 'Resolved';
+
+      if (statusJustBecameResolved && !resolvedTransferProcessedIds.contains(c.Id)) {
+        resolvedTransferProcessedIds.add(c.Id);
+        casesToTransfer.add(c);
+      }
+    }
+
+    if (!casesToTransfer.isEmpty()) {
+      // Lookup Supervisor Queue Id by name
+      Group supervisorQueue = [
+        SELECT Id
+        FROM Group
+        WHERE Type = 'Queue'
+        AND DeveloperName = :SUPERVISOR_QUEUE_DEV_NAME
+        LIMIT 1
+      ];
+
+      // owner transfer in system context
+      List<Case> ownerUpdates = new List<Case>();
+      for (Case c : casesToTransfer) {
+        ownerUpdates.add(new Case(
+          Id = c.Id,
+          OwnerId = supervisorQueue.Id
+        ));
+      }
+      Database.update(ownerUpdates, false);
     }
   }
 }

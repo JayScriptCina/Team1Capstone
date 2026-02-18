@@ -112,6 +112,42 @@ public class ProviderInteractionControllerTest {
     System.assertEquals(1, ca.size(), 'A Provider Lookup Case Activity should exist');
   }
 
+  // Case Provider Query: Agents should see all providers
+  @IsTest
+  static void testGetCaseProviders_UserMode() {
+    // Create an Agent in the Medical Queue
+    User agent = TestDataFactory.createAgentUser();
+    TestDataFactory.assignUserToQueue(agent, 'Housing');
+    
+    // Create case
+    System.runAs(agent) {
+      Case c = [SELECT Id, Status FROM Case LIMIT 1];
+    Provider__c p = [
+      SELECT Id FROM Provider__c
+      WHERE Accepting_New_Patients__c = true
+      LIMIT 1
+    ];
+
+    Test.startTest();
+    ProviderInteractionController.ActionResponse result =
+      ProviderInteractionController.setProviders(
+        c.Id,
+        new List<Id>{ p.Id }
+      );
+    Test.stopTest();
+
+    System.assertEquals(true, result.success, 'message: ' + result.message);
+    System.assert(result.message.contains('successfully attached'));
+
+    // Verify Case_Provider__c
+    System.assertEquals(
+      1,
+      [SELECT COUNT() FROM Case_Provider__c WHERE Case__c = :c.Id]
+    );
+
+    }
+  }
+
   @IsTest
   static void testSetProviders_duplicateProvider() {
     Case c = [SELECT Id FROM Case LIMIT 1];

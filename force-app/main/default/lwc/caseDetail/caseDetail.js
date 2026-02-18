@@ -91,7 +91,7 @@ export default class CaseDetail extends LightningElement {
   }
 
   handleError(event) {
-    console.error('Error in form submission', event.detail);
+    console.error('Error in form submission', event);
     // This will display the error in the console
 
     this.isSaving = false;

@@ -98,7 +98,7 @@ public with sharing class ProviderInteractionController {
       insert as user providersToInsert;
     } catch (Exception e) {
       System.debug('Error inserting Case Providers: ' + e.getMessage());
-      return new ActionResponse(false, 'Failed to attach providers');
+      return new ActionResponse(false, 'Failed to attach providers' + e.getMessage());
     }
     
     // Create Case_Activity__c for case
