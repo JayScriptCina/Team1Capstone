@@ -35,7 +35,7 @@ This application implements a centralized public health case management platform
 
 The system replaces manual, inconsistent case handling processes with a structured, automated workflow.
 
-The **Case** object serves as the system of record. All lifecycle events, routing decisions, SLAs, provider enrichment, approvals, and audit history are anchored to the Case object.
+The **Case** object serves as the system of record. All lifecycle events, routing decisions, SLAs, provider enrichment, approvals, and audit history are anchored to the Case object via Case Activity Object.
 
 ---
 
@@ -89,7 +89,7 @@ Stores provider data retrieved from an external API.
 Junction object connecting:
 
 ```
-Case 1 —— * Case_Provider__c * —— 1 Provider__c
+Case —— * Case_Provider__c * —— Provider__c
 ```
 
 Enables:
@@ -110,19 +110,8 @@ Handles:
 * Citizen lookup or creation
 * Account linking or creation
 * Case data capture
-* SLA calculation
 * Case creation
 * Routing to correct queue
-
----
-
-### SLA Calculation Subflow
-
-Calculates SLA target based on priority:
-
-* High → +24 hours
-* Medium → +48 hours
-* Low → +72 hours
 
 ---
 
@@ -132,8 +121,9 @@ Calculates SLA target based on priority:
 
 * Logs intake activity
 * Routes case to appropriate queue
+* Calculates SLA target based on case priority and updates Case with new SLA Target(High → +24 hours, Medium → +48 hours, Low → +72 hours)
 
-#### On Priority Escalation
+#### On Priority Escalation to High
 
 * Sends email notification to supervisors
 
@@ -147,7 +137,7 @@ Calculates SLA target based on priority:
 
 * 5 hours before SLA → Status = Risk
 * At SLA target → Status = Breach
-* Sends corresponding notifications
+* Sends corresponding email alert to supervisors
 
 ---
 
@@ -194,14 +184,29 @@ Responsible for:
 
 ### CaseConsole LWC
 
-* Displays case list
-* Displays case detail
+* Accessible to Agents and Supervisors
+* Displays case list with dynamic filtering for:
+  * Case Number
+  * Status
+  * Priority
+  * Record Type
+  * Contact
+  * My Assignments
+* Displays case details and SLA countdown
+* Edit and Save actions following FLS
 * Executes provider lookup
 * Assigns providers to cases
 
 ### CaseTimeline LWC
 
-* Displays Case_Activity__c history
+* Accessible to Supervisors only
+* Displays Case_Activity__c history with dynamic filtering for:
+  * Case Number
+  * Created Date
+  * Type
+  * Context
+  * Error Messages
+  * Stack Trace
 * Serves as full audit trail view
 
 ---
@@ -360,12 +365,6 @@ Apex:
 * Description length validation
 * Audit logging
 * Supervisor-only close guardrails
-
----
-
-# Deployment Steps
-
-(See previous section in documentation.)
 
 ---
 
