@@ -1,4 +1,4 @@
-public class Case_ErrorHandler {
+public without sharing class Case_ErrorHandler {
 
     public class Result {
         public Boolean success;

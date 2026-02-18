@@ -4,9 +4,7 @@ public class ProviderInteractionControllerTest {
   @TestSetup
   static void setupData() {
 
-    Id medicalRecordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName()
-    .get('Medical')
-    .getRecordTypeId();
+    Id medicalRecordTypeId = Schema.SObjectType.Case.getRecordTypeInfosByDeveloperName().get('Medical').getRecordTypeId();
 
     // Create Case
     Case c = new Case(
@@ -46,8 +44,7 @@ public class ProviderInteractionControllerTest {
       ProviderInteractionController.getProviders(c.Id);
     Test.stopTest();
 
-    System.assertEquals(1, results.size(),
-      'Only accepting providers should be returned');
+    System.assertEquals(1, results.size(), 'Only accepting providers should be returned');
   }
 
   @IsTest
@@ -109,6 +106,10 @@ public class ProviderInteractionControllerTest {
     // Verify Case Status update
     c = [SELECT Status FROM Case WHERE Id = :c.Id];
     System.assertEquals('In Progress', c.Status);
+
+    // Verify Log creation
+    List<Case_Activity__c> ca = [SELECT Activity_Type__c FROM Case_Activity__c WHERE Case__c = :c.Id AND Activity_Type__c = 'Provider Lookup'];
+    System.assertEquals(1, ca.size(), 'A Provider Lookup Case Activity should exist');
   }
 
   @IsTest

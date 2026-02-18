@@ -2,7 +2,7 @@
 // Date: 02/10/26
 // Desc: Logic for case creation and insertion
 
-public with sharing class CaseTriggerHandler {
+public without sharing class CaseTriggerHandler {
   
   public static void beforeInsert(List<Case> newCases) {
     enforceRules(newCases);
@@ -28,6 +28,7 @@ public with sharing class CaseTriggerHandler {
     // A Record Triggered flow should create an Intake Activity!
   }
   
+  // Log the update in Case_Activity__c object
   public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
     
     List<Case_Activity__c> logs = new List<Case_Activity__c>();

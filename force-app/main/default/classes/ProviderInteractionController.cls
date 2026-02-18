@@ -20,10 +20,10 @@ public with sharing class ProviderInteractionController {
   public static List<Provider__c> getProviders(Id caseId) {
     
     Case c = [
-    SELECT Id, Triage_Category__c
-    FROM Case
-    WHERE Id = :caseId
-    LIMIT 1
+      SELECT Id, Triage_Category__c
+      FROM Case
+      WHERE Id = :caseId
+      LIMIT 1
     ];
 
     if (c.Triage_Category__c == null) {
@@ -31,11 +31,11 @@ public with sharing class ProviderInteractionController {
     }
     
     return [
-    SELECT Id, Name__c, Phone__c, Location__c, Distance_Miles__c, Capacity_Status__c, Service_Category__c, Specialty__c, Rating__c, Accepting_New_Patients__c
-    FROM Provider__c
-    WHERE Service_Category__c=:c.Triage_Category__c AND Accepting_New_Patients__c=true
-    WITH USER_MODE
-    ORDER BY Rating__c DESC
+      SELECT Id, Name__c, Phone__c, Location__c, Distance_Miles__c, Capacity_Status__c, Service_Category__c, Specialty__c, Rating__c, Accepting_New_Patients__c
+      FROM Provider__c
+      WHERE Service_Category__c=:c.Triage_Category__c AND Accepting_New_Patients__c=true
+      WITH USER_MODE
+      ORDER BY Rating__c DESC
     ];
   }
   
@@ -49,19 +49,19 @@ public with sharing class ProviderInteractionController {
     
     // Query Case & Provider
     Case c = [
-    SELECT Id, Status
-    FROM Case
-    WHERE Id = :caseId
-    LIMIT 1
+      SELECT Id, Status
+      FROM Case
+      WHERE Id = :caseId
+      LIMIT 1
     ];
 
     List<Provider__c> providers = [
-    SELECT Id, Accepting_New_Patients__c
-    FROM Provider__c
-    WHERE Id IN :providerIds
+      SELECT Id, Name__c, Accepting_New_Patients__c
+      FROM Provider__c
+      WHERE Id IN :providerIds
     ];
 
-    // Check for duplicates
+    // Check for duplicates already attached to the case
     Set<Id> existingProviderIds = new Set<Id>();
     for (Case_Provider__c cp : [
       SELECT Provider__c
@@ -72,21 +72,21 @@ public with sharing class ProviderInteractionController {
       existingProviderIds.add(cp.Provider__c);
     }
 
-    List<Case_Provider__c> linksToInsert = new List<Case_Provider__c>();
+    List<Case_Provider__c> providersToInsert = new List<Case_Provider__c>();
 
     for (Provider__c p : providers) {
       if (
         p.Accepting_New_Patients__c &&
         !existingProviderIds.contains(p.Id)
       ) {
-        linksToInsert.add(new Case_Provider__c(
+        providersToInsert.add(new Case_Provider__c(
           Case__c = c.Id,
           Provider__c = p.Id
         ));
       }
     }
 
-    if (linksToInsert.isEmpty()) {
+    if (providersToInsert.isEmpty()) {
       return new ActionResponse(
         false,
         'All selected providers are either already attached or not accepting patients'
@@ -95,23 +95,18 @@ public with sharing class ProviderInteractionController {
 
     // Insert Case_Provider__c records
     try {
-      insert as user linksToInsert;
+      insert as user providersToInsert;
     } catch (Exception e) {
       System.debug('Error inserting Case Providers: ' + e.getMessage());
       return new ActionResponse(false, 'Failed to attach providers');
     }
     
     // Create Case_Activity__c for case
-    try {
-      insert as user new Case_Activity__c(
-        Activity_Type__c = 'Provider Lookup',
-        Case__c = c.Id,
-        Context__c = linksToInsert.size() + ' provider(s) attached to this case'
-      );
-    }
-    catch (Exception e) {
-      System.debug('Error inserting Case Activity: ' + e.getMessage());
-      return new ActionResponse(false, 'Providers attached, but activity failed');
+    Map<Id, Provider__c> providerById = new Map<Id, Provider__c>(providers);
+    CaseActivityLogger.LogResult logResult = CaseActivityLogger.createAttachProvidersLog(c, providersToInsert, providerById);
+
+    if(!logResult.success) { // Does not fail transaction if logging fails (Agent friendly option)
+      return new ActionResponse(true, providersToInsert.size() + ' provider(s) attached, but activity logging failed');
     }
     
     // Change case status to In Progress -> this will trigger the after update case activity creation as well
@@ -122,7 +117,7 @@ public with sharing class ProviderInteractionController {
     
     return new ActionResponse(
       true,
-      linksToInsert.size() + ' provider(s) successfully attached'
+      providersToInsert.size() + ' provider(s) successfully attached'
     );
   }
 }
