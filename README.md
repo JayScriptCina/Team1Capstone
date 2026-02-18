@@ -115,30 +115,15 @@ Handles:
 
 ---
 
-### Routing Subflow (Used in Case Intake)
-
-Checks case category(Medical, Housing, Nutrition) and routes the case its respective queue.
-  
----
-
-### SLA Calculation Subflow
-
-Calculates SLA target based on case priority:
-
-* High → +24 hours
-* Medium → +48 hours
-* Low → +72 hours
-
----
-
 ### Record-Triggered Flows
 
 #### On Case Create
 
 * Logs intake activity
 * Routes case to appropriate queue
+* Calculates SLA target based on case priority and updates Case with new SLA Target(High → +24 hours, Medium → +48 hours, Low → +72 hours)
 
-#### On Priority Escalation
+#### On Priority Escalation to High
 
 * Sends email notification to supervisors
 
@@ -152,7 +137,7 @@ Calculates SLA target based on case priority:
 
 * 5 hours before SLA → Status = Risk
 * At SLA target → Status = Breach
-* Sends corresponding notifications
+* Sends corresponding email alert to supervisors
 
 ---
 
@@ -380,12 +365,6 @@ Apex:
 * Description length validation
 * Audit logging
 * Supervisor-only close guardrails
-
----
-
-# Deployment Steps
-
-(See previous section in documentation.)
 
 ---
 
