@@ -71,7 +71,7 @@ export default class CaseDetail extends LightningElement {
     console.log('finished resetting apex caseDetail.js');
   }
 
-  _recordData;
+  @track _recordData;
   _caseProviderData;
   @track isEditMode = false;
   @track isSaving = false;
@@ -123,7 +123,7 @@ export default class CaseDetail extends LightningElement {
   // }
   
   get SLATargetDate() {
-    return this._recordData?.SLATarget || null;
+    return this._recordData?.fields.SLA_Target__c || null;
   }
   
   get isSaveDisabled() {

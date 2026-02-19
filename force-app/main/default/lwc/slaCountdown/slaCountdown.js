@@ -30,7 +30,8 @@ export default class SlaCountdown extends LightningElement {
   startCountdown() {
     clearInterval(this.timerInterval); // prevent multiple timers
 
-    const endTime = new Date(this.date).getTime();
+    const endTime = new Date(this._date.value).getTime();
+    console.log('_date is:', this._date)
     
     this.timerInterval = setInterval(() => {
       const now = new Date().getTime();
