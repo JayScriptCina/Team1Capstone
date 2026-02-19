@@ -320,8 +320,57 @@ Responsible for:
 
 Permission Sets:
 
-* Case_Agent
-* Case_Supervisor
+### Case_Agent
+
+Access Provisioning
+* Profile: Standard User (or baseline user profile)
+* Permission Set: Case Agent Permission Set
+* Queue Membership: Medical, Housing, Nutrition
+
+Object-Level Access
+* Case
+  * Create, Read, Edit
+  * Cannot Close (restricted via validation/approval process)
+  * Cannot Approve high-priority medical cases
+
+Case_Activity__c
+* Create and Read (log case actions / system activity)
+
+Provider / External Data (if applicable)
+* Read access to view enrichment results
+* Edit access only where assignment is required
+
+Queue Routing
+* Cases are automatically routed to:
+  * Medical Queue
+  * Housing Queue
+  * Nutrition Queue
+* Agents can pull and work cases from the queues they are assigned to.
+
+
+### Case_Supervisor
+
+Access Provisioning
+* Profile: Standard User (or Supervisor profile)
+* Permission Set: Case Supervisor Permission Set
+* Queue Membership: Supervisor (and optional Medical/Housing/Nutrition)
+
+Object-Level Access
+* Case
+  * Create, Read, Edit
+  * Approve / Reject
+  * Close cases
+  * Reassign between queues
+* Case_Activity__c
+  * Read all activity records
+  * Create supervisor notes/actions
+* Audit / History Tracking
+  * View field history tracking
+  * View approval history
+
+Queue Routing
+* Escalated or high-priority cases are routed to the Case Supervisor Queue.
+* Supervisors can reassign cases to the appropriate category queue if needed.
 
 CRUD permissions configured for:
 
