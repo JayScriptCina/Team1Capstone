@@ -37,4 +37,4 @@ global class ProviderDataMock implements HttpCalloutMock {
         res.setBody(body);
         return res;
     }
-}
+} 
