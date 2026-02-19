@@ -103,5 +103,5 @@ public without sharing class CaseTriggerHandler {
       }
       Database.update(ownerUpdates, false);
     }
-  }
+  } 
 }
