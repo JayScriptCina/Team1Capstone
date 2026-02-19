@@ -1,6 +1,6 @@
 // Name: Jay Cina
 
-@isTest
+@isTest 
 public class CaseTriggerHandlerTest {
     
     // Utility method to create a valid Case
