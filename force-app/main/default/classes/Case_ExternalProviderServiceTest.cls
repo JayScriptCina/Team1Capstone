@@ -65,4 +65,4 @@ private class Case_ExternalProviderServiceTest {
             actual == null ? null : actual.trim().toLowerCase()
         );
     }
-}
+} 
