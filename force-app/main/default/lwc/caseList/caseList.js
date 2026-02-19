@@ -70,7 +70,7 @@ export default class CaseList extends LightningElement {
     console.log('filtered data:', this.filteredData);
     
     // Set the priority filter to high upon page load
-    this.filters.priority = "High";
+    //this.filters.priority = "High";
     this.filters.status = "Not Closed";
     this.applyFilters();
     

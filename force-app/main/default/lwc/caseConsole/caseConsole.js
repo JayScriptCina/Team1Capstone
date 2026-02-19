@@ -27,7 +27,7 @@ export default class CaseConsole extends LightningElement {
   @track recordTypeOptions = [];
   caseRecordTypeId;
   @track selectedCaseId; // used for displaying data to children based on the selection in the caseList child component
-  @track recordDetailData;
+  //@track recordDetailData;
   
   // 1. Get Case data in USER_MODE!
   @wire(getCases)
@@ -119,18 +119,18 @@ export default class CaseConsole extends LightningElement {
     
     if(actionName === 'view_details') {
       this.selectedCaseId = rowData.Id;
-      this.updateRecordDetailData();
+      //this.updateRecordDetailData();
     }
   }
   
   // Retrieves data used in caseDetail child components
-  updateRecordDetailData() {
-    if(!this.selectedCaseId || !this.cases) return;
+  // updateRecordDetailData() {
+  //   if(!this.selectedCaseId || !this.cases) return;
 
-    console.log('updating recordDetailData')
-    this.recordDetailData = this.cases.find(c => c.Id === this.selectedCaseId);
-    console.log('data is:', this.recordDetailData);
-  }
+  //   console.log('updating recordDetailData')
+  //   this.recordDetailData = this.cases.find(c => c.Id === this.selectedCaseId);
+  //   console.log('data is:', this.recordDetailData);
+  // }
 
   get caseProviderData() {
     if(!this.selectedCaseId || !this.caseProviders) return null;
@@ -159,7 +159,16 @@ export default class CaseConsole extends LightningElement {
       console.error('Error refreshing data:', error);
     });
 
-    this.updateRecordDetailData();
+    //this.updateRecordDetailData();
+
+    // Call caseDetail refresh
+    const childComponent = this.template.querySelector('c-case-detail');
+
+    if (childComponent) {
+      childComponent.handleRefreshApex();
+    } else {
+      console.error('Child component not found!');
+    }
     
     this.dispatchEvent(
       new ShowToastEvent({
